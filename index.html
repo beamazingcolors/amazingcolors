@@ -40,14 +40,14 @@
         .modal-content { background: var(--primary); border: 1px solid var(--accent); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; border-radius: 4px; position: relative; }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; color: #fff; cursor: pointer; z-index: 10; }
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
-        .modal-gallery { display: flex; flex-direction: column; background: #000; }
-        .modal-gallery img { width: 100%; height: auto; display: block; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .modal-gallery { display: flex; flex-direction: column; background: #000; justify-content: center; }
+        .modal-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .modal-details { padding: 50px; }
         .modal-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--white); margin-bottom: 20px; }
         .modal-label { color: var(--accent); text-transform: uppercase; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; margin-top: 25px; display: block; }
         .btn-wa { display: block; text-align: center; background: var(--gradient); color: var(--primary); text-decoration: none; padding: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; }
 
-        @media (max-width: 850px) { .modal-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 850px) { .modal-grid { grid-template-columns: 1fr; } .card img { height: 250px; } }
     </style>
 </head>
 <body>
@@ -77,11 +77,13 @@
 
         let fullData = [];
 
-        function getImgUrl(name, index = 1) {
+        function getImgUrl(name) {
             if (!name || name.toLowerCase() === 'undefined' || name === 'Experiencias' || name === '') return '';
             let fileName = name.trim();
-            if (index > 0 && !fileName.includes('-')) {
-                fileName = `${fileName}-${index}`;
+            
+            // Si el nombre no termina con -1.jpg, se lo agregamos automáticamente
+            if (!fileName.includes('-1')) {
+                fileName = `${fileName}-1`;
             }
             if (!fileName.toLowerCase().endsWith('.jpg')) {
                 fileName += '.jpg';
@@ -120,9 +122,8 @@
                 card.className = 'card';
                 card.onclick = () => openModal(item.Nombre);
                 
-                const img = getImgUrl(item.Nombre, 1);
+                const img = getImgUrl(item.Nombre);
                 const tag = item['Pies'] !== 'Experiencias' ? item['Pies'] + ' Pies' : 'Selección Premium';
-                
                 let precio = item['Precio'] || 'Experiencias';
                 if (precio.toLowerCase() === 'undefined' || precio.trim() === '') precio = 'Experiencias';
 
@@ -148,11 +149,10 @@
 
             let desc = item['Descriptivo'] !== 'Experiencias' ? item['Descriptivo'] : (item['Detalles'] !== 'Experiencias' ? item['Detalles'] : 'Experiencias');
 
+            // Modificado: Ahora el modal solo genera y renderiza estrictamente la primera imagen
             body.innerHTML = `
                 <div class="modal-gallery">
-                    <img src="${getImgUrl(item.Nombre, 1)}" onerror="this.remove();">
-                    <img src="${getImgUrl(item.Nombre, 2)}" onerror="this.remove();">
-                    <img src="${getImgUrl(item.Nombre, 3)}" onerror="this.remove();">
+                    <img src="${getImgUrl(item.Nombre)}" onerror="this.style.display='none';">
                 </div>
                 <div class="modal-details">
                     <span class="modal-label">Propuesta Exclusiva</span>
