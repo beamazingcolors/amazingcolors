@@ -17,7 +17,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        header { height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(4, 38, 58, 0.85), rgba(4, 38, 58, 0.85)), url('https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/5x1-1.jpg') center/cover; padding: 20px; }
+        header { height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(4, 38, 58, 0.85), rgba(4, 38, 58, 0.85)), url('https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/YATE-1.jpg') center/cover; padding: 20px; }
         h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: 4px; text-transform: uppercase; }
         .header-subtitle { font-size: 1.1rem; letter-spacing: 5px; color: var(--accent); text-transform: uppercase; margin-top: 10px; font-weight: 600; }
 
@@ -77,17 +77,17 @@
 
         let fullData = [];
 
-        function getImgUrl(name) {
-            if (!name || name.toLowerCase() === 'undefined' || name === 'Experiencias' || name === '') return '';
-            let fileName = name.trim();
+        // Lee el nombre definido en la columna "Codigo"
+        function getImgUrlByCodigo(codigoValue) {
+            if (!codigoValue || codigoValue === 'Experiencias' || codigoValue.trim() === '') return '';
             
-            // Si el nombre no termina con -1.jpg, se lo agregamos automáticamente
-            if (!fileName.includes('-1')) {
-                fileName = `${fileName}-1`;
-            }
-            if (!fileName.toLowerCase().endsWith('.jpg')) {
+            let fileName = codigoValue.trim();
+            
+            // Forzar extensión si la celda no la incluye explícitamente
+            if (!fileName.toLowerCase().endsWith('.jpg') && !fileName.toLowerCase().endsWith('.jpeg') && !fileName.toLowerCase().endsWith('.png')) {
                 fileName += '.jpg';
             }
+
             return GITHUB_RAW + encodeURIComponent(fileName);
         }
 
@@ -122,7 +122,10 @@
                 card.className = 'card';
                 card.onclick = () => openModal(item.Nombre);
                 
-                const img = getImgUrl(item.Nombre);
+                // Mapeo flexible buscando "Codigo" o "Código"
+                const codigoCelda = item['Codigo'] || item['Código'] || item['codigo'] || '';
+                const img = getImgUrlByCodigo(codigoCelda);
+
                 const tag = item['Pies'] !== 'Experiencias' ? item['Pies'] + ' Pies' : 'Selección Premium';
                 let precio = item['Precio'] || 'Experiencias';
                 if (precio.toLowerCase() === 'undefined' || precio.trim() === '') precio = 'Experiencias';
@@ -148,11 +151,13 @@
             if (!precio || precio.toLowerCase() === 'undefined' || precio.trim() === '') precio = 'Experiencias';
 
             let desc = item['Descriptivo'] !== 'Experiencias' ? item['Descriptivo'] : (item['Detalles'] !== 'Experiencias' ? item['Detalles'] : 'Experiencias');
+            
+            const codigoCelda = item['Codigo'] || item['Código'] || item['codigo'] || '';
+            const img = getImgUrlByCodigo(codigoCelda);
 
-            // Modificado: Ahora el modal solo genera y renderiza estrictamente la primera imagen
             body.innerHTML = `
                 <div class="modal-gallery">
-                    <img src="${getImgUrl(item.Nombre)}" onerror="this.style.display='none';">
+                    <img src="${img}" onerror="this.style.display='none';">
                 </div>
                 <div class="modal-details">
                     <span class="modal-label">Propuesta Exclusiva</span>
