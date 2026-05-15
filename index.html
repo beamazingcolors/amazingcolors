@@ -17,44 +17,33 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        /* Header Luxury */
-        header { height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(4, 38, 58, 0.85), rgba(4, 38, 58, 0.85)), url('https://raw.githubusercontent.com/beamazingcolors/beamazingcolors/main/5x1-1.jpg') center/cover; padding: 20px; }
+        header { height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(4, 38, 58, 0.85), rgba(4, 38, 58, 0.85)), url('https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/5x1-1.jpg') center/cover; padding: 20px; }
         h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: 4px; text-transform: uppercase; }
         .header-subtitle { font-size: 1.1rem; letter-spacing: 5px; color: var(--accent); text-transform: uppercase; margin-top: 10px; font-weight: 600; }
 
-        /* Navegación */
         .nav-bar { position: sticky; top: 0; z-index: 100; background: rgba(4, 38, 58, 0.98); padding: 20px 0; border-bottom: 1px solid rgba(245, 132, 26, 0.2); display: flex; justify-content: center; gap: 40px; }
         .nav-btn { background: none; border: none; color: var(--white); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; opacity: 0.6; transition: 0.4s; padding: 10px 0; }
         .nav-btn.active { opacity: 1; color: var(--accent); border-bottom: 2px solid var(--accent); }
 
-        /* Catálogo Grid */
         #catalog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; padding: 50px 8%; max-width: 1600px; margin: 0 auto; }
-        
-        /* Estilo Tarjeta con Imagen Única */
         .card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; transition: 0.4s; opacity: 0; transform: translateY(20px); cursor: pointer; }
         .card.visible { opacity: 1; transform: translateY(0); }
         .card:hover { border-color: var(--accent); transform: scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
         
-        /* Imagen principal de la tarjeta */
         .card img { width: 100%; height: 300px; object-fit: cover; background: #001524; display: block; }
-        .card img.no-img { object-fit: contain; padding: 40px; opacity: 0.3; }
 
         .card-info { padding: 25px; }
         .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 5px 0; letter-spacing: 1px; }
         .card-price { color: var(--accent); font-weight: 600; font-size: 1.1rem; }
 
-        /* Modal / Vista Detallada */
         #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 38, 58, 0.98); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        .modal-content { background: var(--primary); border: 1px solid var(--accent); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,0.5); position: relative; }
+        .modal-content { background: var(--primary); border: 1px solid var(--accent); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; border-radius: 4px; position: relative; }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; color: #fff; cursor: pointer; z-index: 10; }
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
-        
-        /* La galería del modal sigue mostrando las 3 fotos para detalle */
         .modal-gallery { display: flex; flex-direction: column; background: #000; }
         .modal-gallery img { width: 100%; height: auto; display: block; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        
         .modal-details { padding: 50px; }
-        .modal-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--white); margin-bottom: 20px; line-height: 1.1; }
+        .modal-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--white); margin-bottom: 20px; }
         .modal-label { color: var(--accent); text-transform: uppercase; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; margin-top: 25px; display: block; }
         .btn-wa { display: block; text-align: center; background: var(--gradient); color: var(--primary); text-decoration: none; padding: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; }
 
@@ -84,19 +73,24 @@
 
     <script>
         const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9f5_81pPWsXVaJ5uKaifOyjpmSprGKAzEkGh7qMSd5R83cV8UCJeqldoZIb5l3sN8kDEbFoC2NY0s/pub?gid=451869619&single=true&output=tsv';
-        const GITHUB_RAW = 'https://raw.githubusercontent.com/beamazingcolors/beamazingcolors/main/';
-        const BACKUP_IMG = 'https://raw.githubusercontent.com/beamazingcolors/beamazingcolors/main/5x1-1.jpg';
+        
+        // CORRECCIÓN DE LA RUTA: beamazingcolors/amazingcolors
+        const GITHUB_RAW = 'https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/';
+        const BACKUP_IMG = 'https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/5x1-1.jpg';
 
         let fullData = [];
 
-        // Generador automático de rutas basado estrictamente en el nombre de la actividad
-        function generateImgUrl(nombreExperiencia, numeroFoto) {
-            if (!nombreExperiencia || nombreExperiencia === 'Experiencias' || nombreExperiencia === '') return BACKUP_IMG;
+        function getImgUrl(name, index = 1) {
+            if (!name || name.toLowerCase() === 'undefined' || name === 'Experiencias') return BACKUP_IMG;
             
-            // Limpia espacios al inicio/final y arma el estándar (Ej: BACALAR-1.jpg)
-            let filename = `${nombreExperiencia.trim()}-${numeroFoto}.jpg`;
-            
-            return GITHUB_RAW + encodeURIComponent(filename);
+            let fileName = name.trim();
+            if (index > 0 && !fileName.includes('-')) {
+                fileName = `${fileName}-${index}`;
+            }
+            if (!fileName.toLowerCase().endsWith('.jpg')) {
+                fileName += '.jpg';
+            }
+            return GITHUB_RAW + encodeURIComponent(fileName);
         }
 
         async function init() {
@@ -110,7 +104,6 @@
                     let item = {};
                     headers.forEach((h, i) => {
                         let val = row[i]?.trim();
-                        // LIMPIEZA RADICAL DE UNDEFINED
                         item[h] = (!val || val.toLowerCase() === 'undefined' || val.toLowerCase() === 'null') ? 'Experiencias' : val;
                     });
                     return item;
@@ -131,23 +124,17 @@
                 card.className = 'card';
                 card.onclick = () => openModal(item.Nombre);
                 
-                // Generar solo la URL de la primera imagen
-                const mainImg = generateImgUrl(item.Nombre, 1);
-
-                const tagText = item['Pies'] !== 'Experiencias' ? item['Pies'] + ' Pies' : 'Selección Premium';
+                const img = getImgUrl(item.Nombre, 1);
+                const tag = item['Pies'] !== 'Experiencias' ? item['Pies'] + ' Pies' : 'Selección Premium';
                 
-                // Sustitución radical de "undefined" por "Experiencias" en el precio
                 let precio = item['Precio'] || 'Experiencias';
                 if (precio.toLowerCase() === 'undefined') precio = 'Experiencias';
 
                 card.innerHTML = `
-                    <img src="${mainImg}" alt="${item.Nombre || 'Amazing Colors'}" 
-                         onerror="this.src='${BACKUP_IMG}'; this.classList.add('no-img');">
+                    <img src="${img}" onerror="this.src='${BACKUP_IMG}';">
                     <div class="card-info">
-                        <span style="color:var(--light); font-size:0.75rem; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
-                            ${tagText}
-                        </span>
-                        <h2 class="card-title">${item.Nombre || 'Experiencias'}</h2>
+                        <span style="color:var(--light); font-size:0.75rem; font-weight:600; letter-spacing:2px; text-transform:uppercase;">${tag}</span>
+                        <h2 class="card-title">${item.Nombre}</h2>
                         <p class="card-price">${precio}</p>
                     </div>
                 `;
@@ -160,30 +147,25 @@
             const item = fullData.find(i => i.Nombre === nombre);
             const body = document.getElementById('modal-body');
             
-            // En el modal seguimos generando las 3 rutas para el detalle
-            const img1 = generateImgUrl(item.Nombre, 1);
-            const img2 = generateImgUrl(item.Nombre, 2);
-            const img3 = generateImgUrl(item.Nombre, 3);
-
             body.innerHTML = `
                 <div class="modal-gallery">
-                    <img src="${img1}" onerror="this.style.display='none'">
-                    <img src="${img2}" onerror="this.style.display='none'">
-                    <img src="${img3}" onerror="this.style.display='none'">
+                    <img src="${getImgUrl(item.Nombre, 1)}" onerror="this.style.display='none'">
+                    <img src="${getImgUrl(item.Nombre, 2)}" onerror="this.style.display='none'">
+                    <img src="${getImgUrl(item.Nombre, 3)}" onerror="this.style.display='none'">
                 </div>
                 <div class="modal-details">
                     <span class="modal-label">Propuesta Exclusiva</span>
-                    <h1 class="modal-title" style="font-family:'Playfair Display', serif;">${item.Nombre || 'Experiencias'}</h1>
-                    <p class="card-price" style="font-size:1.6rem;">${item['Precio'] || 'Experiencias'}</p>
+                    <h1 class="modal-title">${item.Nombre}</h1>
+                    <p class="card-price" style="font-size:1.6rem;">${item.Precio}</p>
                     
                     <span class="modal-label">Sobre la Experiencia</span>
-                    <p style="font-size:0.9rem; color:#ccc; font-weight:300;">${item['Descriptivo'] || item['Detalles'] || 'Experiencias'}</p>
+                    <p style="font-size:0.9rem; color:#ccc;">${item['Descriptivo'] || item['Detalles']}</p>
                     
                     ${item['Capacidad de personas'] !== 'Experiencias' ? `<span class="modal-label">Capacidad</span><p>${item['Capacidad de personas']}</p>` : ''}
                     
                     <span class="modal-label">Incluye</span>
-                    <div style="background:rgba(12,181,214,0.1); border-left:3px solid var(--light); padding:20px; font-size:0.85rem; margin-top:10px; color:#eee;">
-                        ${item['Incluye:'] || 'Detalles personalizados vía Concierge.'}
+                    <div style="background:rgba(12,181,214,0.1); border-left:3px solid var(--light); padding:20px; font-size:0.85rem; margin-top:10px;">
+                        ${item['Incluye:'] || 'Servicio Premium de Concierge incluido.'}
                     </div>
                     
                     <a href="https://wa.me/message/XIVP7QDJ5QKIP1" target="_blank" class="btn-wa">Reservar ahora</a>
