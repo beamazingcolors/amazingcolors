@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amazing Colors | Experiencias de Lujo</title>
+    <title>Amazing Colors | Elite Ocean Journeys</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -17,38 +17,46 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
+        /* Header Luxury */
         header { height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(4, 38, 58, 0.85), rgba(4, 38, 58, 0.85)), url('https://raw.githubusercontent.com/beamazingcolors/beamazingcolors/main/5x1-1.jpg') center/cover; padding: 20px; }
         h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: 4px; text-transform: uppercase; }
         .header-subtitle { font-size: 1.1rem; letter-spacing: 5px; color: var(--accent); text-transform: uppercase; margin-top: 10px; font-weight: 600; }
 
+        /* Navegación */
         .nav-bar { position: sticky; top: 0; z-index: 100; background: rgba(4, 38, 58, 0.98); padding: 20px 0; border-bottom: 1px solid rgba(245, 132, 26, 0.2); display: flex; justify-content: center; gap: 40px; }
         .nav-btn { background: none; border: none; color: var(--white); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; opacity: 0.6; transition: 0.4s; padding: 10px 0; }
         .nav-btn.active { opacity: 1; color: var(--accent); border-bottom: 2px solid var(--accent); }
 
+        /* Catálogo Grid */
         #catalog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; padding: 50px 8%; max-width: 1600px; margin: 0 auto; }
-        .card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; cursor: pointer; transition: 0.4s; opacity: 0; transform: translateY(20px); }
-        .card.visible { opacity: 1; transform: translateY(0); }
-        .card:hover { border-color: var(--accent); transform: scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
-        .card img { width: 100%; height: 250px; object-fit: cover; background: #000; }
         
-        .card-info { padding: 25px; }
-        .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 10px 0; letter-spacing: 1px; }
-        .card-price { color: var(--accent); font-weight: 600; font-size: 1.1rem; }
+        /* Estilo Carrusel en Tarjeta */
+        .card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; transition: 0.4s; opacity: 0; transform: translateY(20px); position: relative; }
+        .card.visible { opacity: 1; transform: translateY(0); }
+        
+        .card-carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; height: 280px; }
+        .card-carousel::-webkit-scrollbar { display: none; }
+        .card-carousel img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; scroll-snap-align: start; background: #000; }
 
-        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 38, 58, 0.97); backdrop-filter: blur(12px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        .modal-content { background: var(--primary); border: 1px solid var(--accent); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; position: relative; border-radius: 4px; }
-        .modal-close { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; color: var(--white); cursor: pointer; z-index: 10; }
-        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-        .modal-gallery { display: flex; flex-direction: column; background: #000; }
-        .modal-gallery img { width: 100%; height: auto; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .modal-details { padding: 50px; }
-        .modal-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--white); margin-bottom: 20px; }
-        .modal-label { color: var(--accent); text-transform: uppercase; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; margin-top: 25px; display: block; }
-        .modal-text { font-size: 0.95rem; color: #ccc; margin-bottom: 15px; }
-        .modal-includes { background: rgba(12, 181, 214, 0.08); border-left: 3px solid var(--light); padding: 25px; margin: 25px 0; font-size: 0.9rem; }
-        .btn-wa { display: block; width: 100%; text-align: center; background: var(--gradient); color: var(--primary); text-decoration: none; padding: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; margin-top: 30px; }
+        .carousel-dots { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; pointer-events: none; }
+        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 50%; }
 
-        @media (max-width: 850px) { .modal-grid { grid-template-columns: 1fr; } .modal-details { padding: 30px; } }
+        .card-info { padding: 20px; cursor: pointer; }
+        .card-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin: 5px 0; }
+        .card-price { color: var(--accent); font-weight: 600; }
+
+        /* Modal / Vista Detallada */
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 38, 58, 0.98); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: var(--primary); border: 1px solid var(--accent); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,0.5); position: relative; }
+        .modal-close { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; color: #fff; cursor: pointer; z-index: 10; }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .modal-details { padding: 40px; }
+        .modal-gallery img { width: 100%; height: auto; display: block; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
+        .modal-label { color: var(--accent); text-transform: uppercase; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; margin-top: 20px; display: block; }
+        .btn-wa { display: block; text-align: center; background: var(--gradient); color: var(--primary); text-decoration: none; padding: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; }
+
+        @media (max-width: 850px) { .modal-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -65,7 +73,7 @@
 
     <main id="catalog-grid"></main>
 
-    <div id="modal-overlay" onclick="closeModal(event)">
+    <div id="modal-overlay" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeModal()">&times;</span>
             <div id="modal-body" class="modal-grid"></div>
@@ -74,10 +82,18 @@
 
     <script>
         const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9f5_81pPWsXVaJ5uKaifOyjpmSprGKAzEkGh7qMSd5R83cV8UCJeqldoZIb5l3sN8kDEbFoC2NY0s/pub?gid=451869619&single=true&output=tsv';
-        // RUTA BASE DE GITHUB RAW
-        const GITHUB_BASE = 'https://raw.githubusercontent.com/beamazingcolors/beamazingcolors/main/';
-        
+        const GITHUB_RAW = 'https://raw.githubusercontent.com/beamazingcolors/beamazingcolors/main/';
+
         let fullData = [];
+
+        // Función para limpiar nombres y asegurar .jpg
+        function cleanImg(name) {
+            if(!name || name.toLowerCase() === 'undefined' || name === '') return '';
+            let n = name.trim();
+            // Si no tiene extensión de imagen, se la ponemos
+            if(!n.match(/\.(jpg|jpeg|png|webp)$/i)) n += '.jpg';
+            return GITHUB_RAW + encodeURIComponent(n);
+        }
 
         async function init() {
             try {
@@ -85,25 +101,18 @@
                 const text = await response.text();
                 const rows = text.replace(/\r/g, '').split('\n').filter(r => r.trim() !== '').map(r => r.split('\t'));
                 const headers = rows[0].map(h => h.trim());
+                
                 fullData = rows.slice(1).map(row => {
                     let item = {};
                     headers.forEach((h, i) => {
                         let val = row[i]?.trim();
-                        // LIMPIEZA TOTAL DE UNDEFINED
-                        item[h] = (val === undefined || val === 'undefined' || val === '' || val === 'null') ? '' : val;
+                        // LIMPIEZA RADICAL DE UNDEFINED
+                        item[h] = (!val || val.toLowerCase() === 'undefined' || val.toLowerCase() === 'null') ? 'Experiencias' : val;
                     });
                     return item;
                 });
                 filter('tour');
-            } catch (err) { console.error("Error al cargar datos"); }
-        }
-
-        // Función para construir URL de imagen segura
-        function getImgUrl(name) {
-            if (!name) return 'https://via.placeholder.com/600x400?text=No+Image';
-            if (name.startsWith('http')) return name;
-            // Codifica nombres con espacios o símbolos (como el acento en ATV´S)
-            return GITHUB_BASE + encodeURIComponent(name);
+            } catch (err) { console.error(err); }
         }
 
         function filter(category) {
@@ -111,25 +120,30 @@
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = '';
             
-            const filtered = fullData.filter(i => {
-                const valorTipo = (i['TIPO'] || i['Tipo'] || i['Type'] || '').toLowerCase();
-                return valorTipo.includes(category.toLowerCase());
-            });
+            const filtered = fullData.filter(i => (i['TIPO'] || '').toLowerCase().includes(category));
 
             filtered.forEach((item, idx) => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = () => openModal(item);
                 
-                const tagText = item['Pies'] ? item['Pies'] + ' Pies' : 'Experiencias';
-                const precioMostrado = item['Precio'] || 'Experiencias';
+                // Imágenes para el carrusel
+                const img1 = cleanImg(item['Link 1']);
+                const img2 = cleanImg(item['Link 2']);
+                const img3 = cleanImg(item['Link 3']);
 
                 card.innerHTML = `
-                    <img src="${getImgUrl(item['Link 1'])}" alt="${item.Nombre}">
-                    <div class="card-info">
-                        <span style="color:var(--light); font-size:0.75rem; letter-spacing:2px; font-weight:600; text-transform:uppercase;">${tagText}</span>
+                    <div class="card-carousel">
+                        <img src="${img1}" onerror="this.src='https://via.placeholder.com/600x400/04263a/ffffff?text=Amazing+Colors'">
+                        ${img2 ? `<img src="${img2}">` : ''}
+                        ${img3 ? `<img src="${img3}">` : ''}
+                    </div>
+                    <div class="carousel-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="card-info" onclick="openModal('${item.Nombre}')">
+                        <span style="color:var(--light); font-size:0.7rem; font-weight:600; letter-spacing:1px; text-transform:uppercase;">
+                            ${item['Pies'] !== 'Experiencias' ? item['Pies'] + ' Pies' : 'Selección Premium'}
+                        </span>
                         <h2 class="card-title">${item.Nombre}</h2>
-                        <p class="card-price">${precioMostrado}</p>
+                        <p class="card-price">${item.Precio}</p>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -137,32 +151,31 @@
             });
         }
 
-        function openModal(item) {
+        function openModal(nombre) {
+            const item = fullData.find(i => i.Nombre === nombre);
             const body = document.getElementById('modal-body');
-            const desc = item['Descriptivo'] || item['Detalles'] || 'Experiencias';
-            const inc = item['Incluye:'] || 'Servicio personalizado incluido.';
-            const precio = item['Precio'] || 'Experiencias';
-
             body.innerHTML = `
                 <div class="modal-gallery">
-                    <img src="${getImgUrl(item['Link 1'])}">
-                    <img src="${getImgUrl(item['Link 2'])}">
-                    <img src="${getImgUrl(item['Link 3'])}">
+                    <img src="${cleanImg(item['Link 1'])}">
+                    <img src="${cleanImg(item['Link 2'])}">
+                    <img src="${cleanImg(item['Link 3'])}">
                 </div>
                 <div class="modal-details">
-                    <span class="modal-label">Selección Exclusiva</span>
-                    <h1 class="modal-title">${item.Nombre}</h1>
-                    <p class="card-price" style="font-size:1.8rem;">${precio}</p>
+                    <span class="modal-label">Propuesta Exclusiva</span>
+                    <h1 class="modal-title" style="font-family:'Playfair Display', serif;">${item.Nombre}</h1>
+                    <p class="card-price" style="font-size:1.6rem;">${item.Precio}</p>
                     
-                    <span class="modal-label">La Experiencia</span>
-                    <p class="modal-text">${desc}</p>
+                    <span class="modal-label">Sobre la Experiencia</span>
+                    <p style="font-size:0.9rem; color:#ccc;">${item['Descriptivo'] || item['Detalles']}</p>
                     
-                    ${item['Capacidad de personas'] ? `<span class="modal-label">Invitados</span><p class="modal-text">${item['Capacidad de personas']}</p>` : ''}
+                    ${item['Capacidad de personas'] !== 'Experiencias' ? `<span class="modal-label">Capacidad</span><p>${item['Capacidad de personas']}</p>` : ''}
                     
                     <span class="modal-label">Incluye</span>
-                    <div class="modal-includes">${inc}</div>
+                    <div style="background:rgba(12,181,214,0.1); border-left:3px solid var(--light); padding:20px; font-size:0.85rem; margin-top:10px;">
+                        ${item['Incluye:'] || 'Detalles personalizados vía Concierge.'}
+                    </div>
                     
-                    <a href="https://wa.me/message/XIVP7QDJ5QKIP1" target="_blank" class="btn-wa">Consultar Disponibilidad</a>
+                    <a href="https://wa.me/message/XIVP7QDJ5QKIP1" target="_blank" class="btn-wa">Reservar ahora</a>
                 </div>
             `;
             document.getElementById('modal-overlay').style.display = 'flex';
