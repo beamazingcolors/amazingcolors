@@ -73,24 +73,52 @@
 
     <script>
         const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9f5_81pPWsXVaJ5uKaifOyjpmSprGKAzEkGh7qMSd5R83cV8UCJeqldoZIb5l3sN8kDEbFoC2NY0s/pub?gid=451869619&single=true&output=tsv';
-        
-        // CORRECCIÓN DE LA RUTA: beamazingcolors/amazingcolors
         const GITHUB_RAW = 'https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/';
         const BACKUP_IMG = 'https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/5x1-1.jpg';
 
         let fullData = [];
 
-        function getImgUrl(name, index = 1) {
-            if (!name || name.toLowerCase() === 'undefined' || name === 'Experiencias') return BACKUP_IMG;
-            
-            let fileName = name.trim();
-            if (index > 0 && !fileName.includes('-')) {
-                fileName = `${fileName}-${index}`;
-            }
-            if (!fileName.toLowerCase().endsWith('.jpg')) {
-                fileName += '.jpg';
-            }
+        // Generador inicial estándar
+        function getInitialImgUrl(name, index = 1) {
+            if (!name || name === 'Experiencias') return BACKUP_IMG;
+            let fileName = name.trim() + '-' + index + '.jpg';
             return GITHUB_RAW + encodeURIComponent(fileName);
+        }
+
+        // Motor de descarte inteligente para corregir discrepancias entre Excel y GitHub
+        function healLuxuryImage(img, originalName, photoIndex) {
+            if (!img.dataset.attempt) img.dataset.attempt = "0";
+            let attempt = parseInt(img.dataset.attempt) + 1;
+            img.dataset.attempt = attempt;
+
+            let clean = originalName.trim();
+            let nextSrc = BACKUP_IMG;
+
+            // Algoritmo de descarte secuencial
+            if (attempt === 1) {
+                // Intenta con extensión .JPG en mayúsculas
+                nextSrc = GITHUB_RAW + encodeURIComponent(clean + '-' + photoIndex + '.JPG');
+            } else if (attempt === 2) {
+                // Intenta pasar espacios a guiones (Ej: XCARET PLUS -> XCARET-PLUS)
+                nextSrc = GITHUB_RAW + encodeURIComponent(clean.replace(/\s+/g, '-') + '-' + photoIndex + '.jpg');
+            } else if (attempt === 3) {
+                // Intenta forzar todo a MAYÚSCULAS totales
+                nextSrc = GITHUB_RAW + encodeURIComponent(clean.toUpperCase() + '-' + photoIndex + '.jpg');
+            } else if (attempt === 4) {
+                // Toma solo la primera palabra (Ej: "Tour Bacalar" -> intenta "BACALAR")
+                let words = clean.split(' ');
+                let keyword = words[0].toUpperCase() === 'TOUR' && words[1] ? words[1] : words[0];
+                nextSrc = GITHUB_RAW + encodeURIComponent(keyword.toUpperCase() + '-' + photoIndex + '.jpg');
+            } else if (attempt === 5) {
+                // Intenta la palabra clave con extensión .JPG
+                let words = clean.split(' ');
+                let keyword = words[0].toUpperCase() === 'TOUR' && words[1] ? words[1] : words[0];
+                nextSrc = GITHUB_RAW + encodeURIComponent(keyword.toUpperCase() + '-' + photoIndex + '.JPG');
+            }
+
+            if (attempt <= 6) {
+                img.src = nextSrc;
+            }
         }
 
         async function init() {
@@ -104,7 +132,12 @@
                     let item = {};
                     headers.forEach((h, i) => {
                         let val = row[i]?.trim();
-                        item[h] = (!val || val.toLowerCase() === 'undefined' || val.toLowerCase() === 'null') ? 'Experiencias' : val;
+                        // Control estricto anti-undefined
+                        if (!val || val.toLowerCase() === 'undefined' || val.toLowerCase() === 'null' || val === '') {
+                            item[h] = 'Experiencias';
+                        } else {
+                            item[h] = val;
+                        }
                     });
                     return item;
                 });
@@ -124,14 +157,14 @@
                 card.className = 'card';
                 card.onclick = () => openModal(item.Nombre);
                 
-                const img = getImgUrl(item.Nombre, 1);
+                const imgUrl = getInitialImgUrl(item.Nombre, 1);
                 const tag = item['Pies'] !== 'Experiencias' ? item['Pies'] + ' Pies' : 'Selección Premium';
                 
-                let precio = item['Precio'] || 'Experiencias';
-                if (precio.toLowerCase() === 'undefined') precio = 'Experiencias';
+                let precio = item['Precio'];
+                if (!precio || precio.toLowerCase() === 'undefined') precio = 'Experiencias';
 
                 card.innerHTML = `
-                    <img src="${img}" onerror="this.src='${BACKUP_IMG}';">
+                    <img src="${imgUrl}" alt="${item.Nombre}" onerror="healLuxuryImage(this, '${item.Nombre}', 1);">
                     <div class="card-info">
                         <span style="color:var(--light); font-size:0.75rem; font-weight:600; letter-spacing:2px; text-transform:uppercase;">${tag}</span>
                         <h2 class="card-title">${item.Nombre}</h2>
@@ -147,25 +180,30 @@
             const item = fullData.find(i => i.Nombre === nombre);
             const body = document.getElementById('modal-body');
             
+            let precio = item.Precio;
+            if (!precio || precio.toLowerCase() === 'undefined') precio = 'Experiencias';
+            
+            let desc = item['Descriptivo'] !== 'Experiencias' ? item['Descriptivo'] : (item['Detalles'] !== 'Experiencias' ? item['Detalles'] : 'Experiencias');
+
             body.innerHTML = `
                 <div class="modal-gallery">
-                    <img src="${getImgUrl(item.Nombre, 1)}" onerror="this.style.display='none'">
-                    <img src="${getImgUrl(item.Nombre, 2)}" onerror="this.style.display='none'">
-                    <img src="${getImgUrl(item.Nombre, 3)}" onerror="this.style.display='none'">
+                    <img src="${getInitialImgUrl(item.Nombre, 1)}" onerror="healLuxuryImage(this, '${item.Nombre}', 1);">
+                    <img src="${getInitialImgUrl(item.Nombre, 2)}" onerror="healLuxuryImage(this, '${item.Nombre}', 2);">
+                    <img src="${getInitialImgUrl(item.Nombre, 3)}" onerror="healLuxuryImage(this, '${item.Nombre}', 3);">
                 </div>
                 <div class="modal-details">
                     <span class="modal-label">Propuesta Exclusiva</span>
                     <h1 class="modal-title">${item.Nombre}</h1>
-                    <p class="card-price" style="font-size:1.6rem;">${item.Precio}</p>
+                    <p class="card-price" style="font-size:1.6rem;">${precio}</p>
                     
                     <span class="modal-label">Sobre la Experiencia</span>
-                    <p style="font-size:0.9rem; color:#ccc;">${item['Descriptivo'] || item['Detalles']}</p>
+                    <p style="font-size:0.9rem; color:#ccc;">${desc}</p>
                     
                     ${item['Capacidad de personas'] !== 'Experiencias' ? `<span class="modal-label">Capacidad</span><p>${item['Capacidad de personas']}</p>` : ''}
                     
                     <span class="modal-label">Incluye</span>
                     <div style="background:rgba(12,181,214,0.1); border-left:3px solid var(--light); padding:20px; font-size:0.85rem; margin-top:10px;">
-                        ${item['Incluye:'] || 'Servicio Premium de Concierge incluido.'}
+                        ${item['Incluye:'] !== 'Experiencias' ? item['Incluye:'] : 'Servicio Premium de Concierge incluido.'}
                     </div>
                     
                     <a href="https://wa.me/message/XIVP7QDJ5QKIP1" target="_blank" class="btn-wa">Reservar ahora</a>
