@@ -122,7 +122,9 @@
                 
                 const img = getImgUrl(item.Nombre, 1);
                 const tag = item['Pies'] !== 'Experiencias' ? item['Pies'] + ' Pies' : 'Selección Premium';
+                
                 let precio = item['Precio'] || 'Experiencias';
+                if (precio.toLowerCase() === 'undefined' || precio.trim() === '') precio = 'Experiencias';
 
                 card.innerHTML = `
                     <img src="${img}" onerror="this.style.display='none';">
@@ -141,7 +143,11 @@
             const item = fullData.find(i => i.Nombre === nombre);
             const body = document.getElementById('modal-body');
             
-            // Si las imágenes 2 o 3 fallan, se eliminan por completo del HTML de inmediato
+            let precio = item.Precio;
+            if (!precio || precio.toLowerCase() === 'undefined' || precio.trim() === '') precio = 'Experiencias';
+
+            let desc = item['Descriptivo'] !== 'Experiencias' ? item['Descriptivo'] : (item['Detalles'] !== 'Experiencias' ? item['Detalles'] : 'Experiencias');
+
             body.innerHTML = `
                 <div class="modal-gallery">
                     <img src="${getImgUrl(item.Nombre, 1)}" onerror="this.remove();">
@@ -151,16 +157,16 @@
                 <div class="modal-details">
                     <span class="modal-label">Propuesta Exclusiva</span>
                     <h1 class="modal-title">${item.Nombre}</h1>
-                    <p class="card-price" style="font-size:1.6rem;">${item.Precio}</p>
+                    <p class="card-price" style="font-size:1.6rem;">${precio}</p>
                     
                     <span class="modal-label">Sobre la Experiencia</span>
-                    <p style="font-size:0.9rem; color:#ccc;">${item['Descriptivo'] || item['Detalles']}</p>
+                    <p style="font-size:0.9rem; color:#ccc;">${desc}</p>
                     
                     ${item['Capacidad de personas'] !== 'Experiencias' ? `<span class="modal-label">Capacidad</span><p>${item['Capacidad de personas']}</p>` : ''}
                     
                     <span class="modal-label">Incluye</span>
                     <div style="background:rgba(12,181,214,0.1); border-left:3px solid var(--light); padding:20px; font-size:0.85rem; margin-top:10px;">
-                        ${item['Incluye:'] || 'Servicio Premium de Concierge incluido.'}
+                        ${item['Incluye:'] !== 'Experiencias' ? item['Incluye:'] : 'Servicio Premium de Concierge incluido.'}
                     </div>
                     
                     <a href="https://wa.me/message/XIVP7QDJ5QKIP1" target="_blank" class="btn-wa">Reservar ahora</a>
