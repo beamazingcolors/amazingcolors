@@ -36,17 +36,26 @@
         .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 5px 0; letter-spacing: 1px; }
         .card-price { color: var(--accent); font-weight: 600; font-size: 1.1rem; }
 
+        /* MODAL / Vista Detallada */
         #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 38, 58, 0.98); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
         .modal-content { background: var(--primary); border: 1px solid var(--accent); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; border-radius: 4px; position: relative; }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; color: #fff; cursor: pointer; z-index: 10; }
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        
         .modal-gallery { display: flex; flex-direction: column; background: #000; justify-content: center; }
-        .modal-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .modal-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; transition: transform 0.3s; }
+        .modal-gallery img:hover { transform: scale(1.01); }
+        
         .modal-details { padding: 50px; }
         .modal-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--white); margin-bottom: 20px; }
         .modal-label { color: var(--accent); text-transform: uppercase; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; margin-top: 25px; display: block; }
         .btn-wa { display: block; text-align: center; background: var(--gradient); color: var(--primary); text-decoration: none; padding: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; }
 
+        /* INTERFAZ LIGHTBOX FULLSCREEN */
+        #lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; cursor: zoom-out; animation: fadeIn 0.2s ease-out; }
+        #lightbox-overlay img { max-width: 95%; max-height: 95vh; object-fit: contain; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.9); }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @media (max-width: 850px) { .modal-grid { grid-template-columns: 1fr; } .card img { height: 250px; } }
     </style>
 </head>
@@ -71,23 +80,23 @@
         </div>
     </div>
 
+    <div id="lightbox-overlay" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="Vista Completa">
+    </div>
+
     <script>
         const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9f5_81pPWsXVaJ5uKaifOyjpmSprGKAzEkGh7qMSd5R83cV8UCJeqldoZIb5l3sN8kDEbFoC2NY0s/pub?gid=451869619&single=true&output=tsv';
         const GITHUB_RAW = 'https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/';
 
         let fullData = [];
 
-        // Lee el nombre definido en la columna "Codigo"
         function getImgUrlByCodigo(codigoValue) {
             if (!codigoValue || codigoValue === 'Experiencias' || codigoValue.trim() === '') return '';
-            
             let fileName = codigoValue.trim();
-            
-            // Forzar extensión si la celda no la incluye explícitamente
+            if (!fileName.includes('-1')) { fileName = `${fileName}-1`; }
             if (!fileName.toLowerCase().endsWith('.jpg') && !fileName.toLowerCase().endsWith('.jpeg') && !fileName.toLowerCase().endsWith('.png')) {
                 fileName += '.jpg';
             }
-
             return GITHUB_RAW + encodeURIComponent(fileName);
         }
 
@@ -122,10 +131,8 @@
                 card.className = 'card';
                 card.onclick = () => openModal(item.Nombre);
                 
-                // Mapeo flexible buscando "Codigo" o "Código"
                 const codigoCelda = item['Codigo'] || item['Código'] || item['codigo'] || '';
                 const img = getImgUrlByCodigo(codigoCelda);
-
                 const tag = item['Pies'] !== 'Experiencias' ? item['Pies'] + ' Pies' : 'Selección Premium';
                 let precio = item['Precio'] || 'Experiencias';
                 if (precio.toLowerCase() === 'undefined' || precio.trim() === '') precio = 'Experiencias';
@@ -149,15 +156,15 @@
             
             let precio = item.Precio;
             if (!precio || precio.toLowerCase() === 'undefined' || precio.trim() === '') precio = 'Experiencias';
-
             let desc = item['Descriptivo'] !== 'Experiencias' ? item['Descriptivo'] : (item['Detalles'] !== 'Experiencias' ? item['Detalles'] : 'Experiencias');
             
             const codigoCelda = item['Codigo'] || item['Código'] || item['codigo'] || '';
             const img = getImgUrlByCodigo(codigoCelda);
 
+            // Se integra la acción 'openLightbox' al hacer click sobre la imagen expuesta
             body.innerHTML = `
                 <div class="modal-gallery">
-                    <img src="${img}" onerror="this.style.display='none';">
+                    <img src="${img}" onclick="openLightbox('${img}')" title="Click para expandir" onerror="this.style.display='none';">
                 </div>
                 <div class="modal-details">
                     <span class="modal-label">Propuesta Exclusiva</span>
@@ -184,6 +191,18 @@
         function closeModal() {
             document.getElementById('modal-overlay').style.display = 'none';
             document.body.style.overflow = 'auto';
+        }
+
+        /* Lógica del Lightbox */
+        function openLightbox(src) {
+            const overlay = document.getElementById('lightbox-overlay');
+            const img = document.getElementById('lightbox-img');
+            img.src = src;
+            overlay.style.display = 'flex';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox-overlay').style.display = 'none';
         }
 
         init();
