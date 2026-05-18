@@ -7,10 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-dark: #000000; /* Negro Absoluto para contraste */
+            --primary-dark: #000000; 
             --brand-blue: #04263a; 
-            --accent: #bd5307;     /* Naranja Quemado del Botón */
-            --light: #0cb5d6;      /* Neón Cian */
+            --accent: #bd5307;  
+            --light: #0cb5d6;   
             --white: #ffffff;
             --pearl-bg: #f7f5f0;   
             --gradient: linear-gradient(135deg, #f5841a 0%, #ffb347 100%);
@@ -19,7 +19,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary-dark); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        /* 1. PANTALLA DE INICIO CINEMATOGRÁFICA (MOVIMIENTO GARANTIZADO) */
+        /* 1. PANTALLA DE INICIO CON LIENZO DE HUMO REAL */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0;
@@ -41,65 +41,18 @@
             pointer-events: none;
         }
 
-        /* MOTOR DE MOVIMIENTO FLUIDO (NUEVA TÉCNICA ROBUSTA) */
-        .fluid-art-container {
+        /* El lienzo ocupa todo el fondo de la entrada */
+        #smokeCanvas {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000000;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1;
-            overflow: hidden;
-        }
-
-        /* Capas de degradados con desenfoque masivo y animaciones independientes */
-        .fluid-layer {
-            position: absolute;
-            width: 150%;
-            height: 150%;
-            top: -25%;
-            left: -25%;
-            filter: blur(150px); /* Desenfoque extremo para suavizar los colores en humo */
-            opacity: 0.7;
-            mix-blend-mode: screen; /* Mezcla de color para brillo tipo neón */
-            animation: fluidFlow infinite linear;
-        }
-
-        /* Capa 1: Azules y Cianes (Fondo) */
-        .fluid-layer-1 {
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(4, 38, 58, 0.8), transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(12, 181, 214, 0.6), transparent 50%);
-            animation-duration: 25s;
-        }
-
-        /* Capa 2: Magentas, Rosas y Naranjas (Movimiento Medio) */
-        .fluid-layer-2 {
-            background: 
-                radial-gradient(circle at 70% 20%, rgba(189, 21, 124, 0.5), transparent 45%),
-                radial-gradient(circle at 30% 70%, rgba(245, 132, 26, 0.5), transparent 45%);
-            animation-duration: 20s;
-            animation-direction: reverse;
-        }
-
-        /* Capa 3: Destellos de color (Superficie) */
-        .fluid-layer-3 {
-            background: 
-                radial-gradient(circle at 50% 10%, rgba(12, 181, 214, 0.4), transparent 40%),
-                radial-gradient(circle at 50% 90%, rgba(189, 21, 124, 0.4), transparent 40%),
-                radial-gradient(circle at 10% 50%, rgba(245, 132, 26, 0.4), transparent 40%);
-            animation-duration: 30s;
-        }
-
-        /* Animación de rotación y traslación para simular flujo de humo */
-        @keyframes fluidFlow {
-            0% { transform: rotate(0deg) translate(0, 0) scale(1); }
-            50% { transform: rotate(180deg) translate(50px, -50px) scale(1.1); }
-            100% { transform: rotate(360deg) translate(0, 0) scale(1); }
         }
 
         .vignette-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.6) 70%, #000000 100%);
+            background: radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.4) 60%, #000000 95%);
             z-index: 2;
             pointer-events: none;
         }
@@ -118,7 +71,7 @@
             width: 260px;
             max-width: 75vw;
             margin-bottom: 35px;
-            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.6));
         }
 
         .welcome-content h1 {
@@ -166,7 +119,7 @@
             filter: brightness(1.1);
         }
 
-        /* 2. INTERFAZ PRINCIPAL (CATÁLOGO ESTILO PERLADO) */
+        /* 2. INTERFAZ PRINCIPAL (CATÁLOGO EN ENTORNO PERLADO CLARO) */
         #main-site-wrapper {
             opacity: 0;
             background-color: var(--pearl-bg);
@@ -328,10 +281,8 @@
 <body>
 
     <div id="welcome-screen">
-        <div class="fluid-art-container">
-            <div class="fluid-layer fluid-layer-1"></div>
-            <div class="fluid-layer fluid-layer-2"></div>
-            <div class="fluid-layer fluid-layer-3"></div>
+        <div class="smoke-container">
+            <canvas id="smokeCanvas"></canvas>
             <div class="vignette-overlay"></div>
         </div>
         <div class="welcome-content">
@@ -385,6 +336,90 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        /* SIMULADOR DE HUMO FLUIDO POR CANVAS (ALTA COMPATIBILIDAD) */
+        const canvas = document.getElementById('smokeCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class SmokeParticle {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * canvas.height; // Distribución inicial uniforme
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100;
+                this.size = Math.random() * 180 + 100;
+                this.speedY = -(Math.random() * 0.7 + 0.4);
+                this.speedX = Math.sin(Math.random() * 2) * 0.5;
+                this.alpha = 0;
+                this.maxAlpha = Math.random() * 0.12 + 0.04;
+                
+                // Paleta exacta de colores de la marca
+                const colors = [
+                    '4, 38, 58',    /* Azul Marino */
+                    '12, 181, 214',  /* Neón Cian */
+                    '245, 132, 26',  /* Naranja Luxury */
+                    '189, 21, 124'   /* Rosado/Magenta */
+                ];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX + Math.sin(this.y / 40) * 0.3; // Ondulación orgánica
+
+                // Ciclo de desvanecimiento (Fade in / Fade out)
+                if (this.y < canvas.height * 0.8) {
+                    this.alpha -= 0.001;
+                } else if (this.alpha < this.maxAlpha) {
+                    this.alpha += 0.002;
+                }
+
+                if (this.y + this.size < 0 || this.alpha <= 0) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.globalCompositeOperation = 'screen'; /* Mezcla luminosa premium */
+                const gradient = ctx.createRadialGradient(this.x, this.y, 10, this.x, this.y, this.size);
+                gradient.addColorStop(0, `rgba(${this.color}, ${this.alpha})`);
+                gradient.addColorStop(0.5, `rgba(${this.color}, ${this.alpha * 0.4})`);
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Crear banco de partículas fluidas
+        for (let i = 0; i < 45; i++) {
+            particles.push(new SmokeParticle());
+        }
+
+        function animateSmoke() {
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animateSmoke);
+        }
+        animateSmoke();
+
+        /* LÓGICA DE DATOS Y FILTRADO DEL SITIO */
         function getCleanValue(item, possibleHeaders) {
             if (!item) return '';
             for (let originalKey in item) {
