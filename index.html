@@ -22,7 +22,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary-dark); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        /* LIENZO DE HUMO GLOBAL INTERACTIVO */
+        /* LIENZO DE ORBES GLOBAL (Por encima de todo el sitio, transparente e interactivo) */
         #smokeCanvas {
             position: fixed;
             top: 0; left: 0;
@@ -283,7 +283,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* MOTOR DE HUMO AJUSTADO: FINO, DELGADO Y LLAMATIVO */
+        /* MOTOR DE RENDIMIENTO DE HUMO: ESTILO ORBES EVAPORÁNDOSE */
         const canvas = document.getElementById('smokeCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -301,17 +301,17 @@
             constructor(isFromMouse = false, mouseX = 0, mouseY = 0) {
                 this.isMouse = isFromMouse;
                 if (this.isMouse) {
-                    // REFINAMIENTO DE ALTA GAMA: Trazo fino como filamento
-                    this.x = mouseX + (Math.random() - 0.5) * 4;  /* Dispersión mínima para un trazo bien delgado */
-                    this.y = mouseY + (Math.random() - 0.5) * 4;
-                    this.size = Math.random() * 8 + 4;            /* Tamaño inicial muy sutil y fino */
-                    this.growth = Math.random() * 0.3 + 0.1;       /* Crecimiento controlado para que no se infle */
-                    this.speedY = -(Math.random() * 1.4 + 0.8);    /* Flujo continuo ascendente */
-                    this.speedX = (Math.random() - 0.5) * 1.2; 
-                    this.alpha = 0.85;                             /* Opacidad mayor para que sea muy llamativo a la vista */
-                    this.decay = Math.random() * 0.014 + 0.010;    /* Duración exacta de la estela elegante */
+                    // FISICAS DE ORBES EVAPORÁNDOSE: Estética ultra fina, fluida y magnética
+                    this.x = mouseX + (Math.random() - 0.5) * 6;  
+                    this.y = mouseY + (Math.random() - 0.5) * 6;
+                    this.size = Math.random() * 5 + 3;          /* Nacen muy pequeños, estilo cuentas u orbes */
+                    this.growth = -(Math.random() * 0.05 + 0.03); /* EVAPORACIÓN RECTIFICADA: Reducen su tamaño a cero continuamente */
+                    this.speedY = -(Math.random() * 1.6 + 1.0);   /* Ascenso sutil y vaporoso */
+                    this.speedX = (Math.random() - 0.5) * 1.5;   
+                    this.alpha = 0.9;                             /* Destello inicial nítido y llamativo */
+                    this.decay = Math.random() * 0.008 + 0.006;   /* TIEMPO CONTROLADO: Duran un poco más flotando en el aire */
                     
-                    // Colores HSL premium con saturación alta (Llamativos)
+                    // Colores aleatorios en espectro HSL vibrante
                     this.hue = Math.floor(Math.random() * 360);
                     this.colorFormat = 'hsl';
                 } else {
@@ -324,17 +324,24 @@
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + Math.random() * 80;
                 this.size = Math.random() * 160 + 90;
+                this.growth = 0;
                 this.speedY = -(Math.random() * 2.8 + 1.8);
                 this.speedX = Math.sin(Math.random() * 2) * 1.6;
                 this.alpha = 0;
                 this.maxAlpha = Math.random() * 0.14 + 0.05;
+                this.decay = 0;
                 this.colorFormat = 'rgb';
                 this.color = BRAND_COLORS[Math.floor(Math.random() * BRAND_COLORS.length)];
             }
 
             update() {
                 if (this.isMouse) {
-                    this.x += this.speedX; this.y += this.speedY; this.size += this.growth; this.alpha -= this.decay;
+                    this.x += this.speedX; 
+                    this.y += this.speedY; 
+                    this.size += this.growth; /* Reduce el radio progresivamente */
+                    this.alpha -= this.decay;
+                    
+                    if (this.size < 0.1) this.size = 0.1; // Evita valores de radio negativos
                 } else {
                     this.y += this.speedY; this.x += this.speedX + Math.sin(this.y / 25) * 0.8; 
                     if (this.y < canvas.height * 0.4) { this.alpha -= 0.006; } else if (this.alpha < this.maxAlpha) { this.alpha += 0.009; }
@@ -342,24 +349,38 @@
             }
 
             draw() {
-                if (this.alpha <= 0) return;
+                if (this.alpha <= 0 || this.size <= 0.1) return;
                 ctx.save();
                 ctx.globalCompositeOperation = 'source-over'; 
-                const gradient = ctx.createRadialGradient(this.x, this.y, 1, this.x, this.y, this.size);
                 
-                // HSL con un 95% de saturación y 55% de brillo para que los destellos sean imponentes
+                // Efecto de orbe con un degradado radial interno muy concentrado
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0.5, this.x, this.y, this.size);
                 let colorBase = this.colorFormat === 'hsl' ? `hsla(${this.hue}, 95%, 55%, ` : `rgba(${this.color}, `;
                 
                 gradient.addColorStop(0, colorBase + `${this.alpha})`);
-                gradient.addColorStop(0.3, colorBase + `${this.alpha * 0.3})`);
+                gradient.addColorStop(0.4, colorBase + `${this.alpha * 0.5})`);
                 gradient.addColorStop(1, colorBase + '0)');
-                ctx.fillStyle = gradient; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+                
+                ctx.fillStyle = gradient; 
+                ctx.beginPath(); 
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); 
+                ctx.fill(); 
+                ctx.restore();
             }
         }
 
         for (let i = 0; i < 40; i++) { particles.push(new SmokeParticle(false)); }
-        window.addEventListener('mousemove', (e) => { particles.push(new SmokeParticle(true, e.clientX, e.clientY)); });
-        window.addEventListener('touchmove', (e) => { const touch = e.touches[0]; particles.push(new SmokeParticle(true, touch.clientX, touch.clientY)); }, { passive: true });
+        
+        // Emisión continua al mover el cursor en escritorio
+        window.addEventListener('mousemove', (e) => {
+            for (let i = 0; i < 2; i++) { particles.push(new SmokeParticle(true, e.clientX, e.clientY)); }
+        });
+        
+        // Emisión continua al deslizar en móviles sin interferir con el scroll del catálogo
+        window.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            for (let i = 0; i < 2; i++) { particles.push(new SmokeParticle(true, touch.clientX, touch.clientY)); }
+        }, { passive: true });
 
         function animateSmoke() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -367,14 +388,18 @@
                 particles[i].update();
                 if (!particles[i].isMouse && isMainSiteActive) { particles[i].alpha = 0; }
                 particles[i].draw();
-                if (particles[i].isMouse) { if (particles[i].alpha <= 0) { particles.splice(i, 1); } } 
-                else { if (particles[i].y + particles[i].size < 0 || particles[i].alpha <= 0) { particles[i].resetAmbient(); } }
+                if (particles[i].isMouse) { 
+                    if (particles[i].alpha <= 0 || particles[i].size <= 0.1) { particles.splice(i, 1); } 
+                } 
+                else { 
+                    if (particles[i].y + particles[i].size < 0 || particles[i].alpha <= 0) { particles[i].resetAmbient(); } 
+                }
             }
             requestAnimationFrame(animateSmoke);
         }
         animateSmoke();
 
-        /* PARSEO DATOS */
+        /* PARSEO DATOS GOOGLE SHEETS */
         function getCleanValue(item, possibleHeaders) {
             if (!item) return '';
             for (let originalKey in item) {
