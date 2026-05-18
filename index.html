@@ -8,7 +8,6 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
     <style>
         :root {
             --primary-dark: #000000; 
@@ -132,37 +131,33 @@
             opacity: 1;
         }
 
+        /* CABECERA: Limpia y puramente tipográfica para la sección del catálogo */
         .site-brand-header {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 45px 15px 20px 15px;
+            padding: 50px 15px 25px 15px;
             cursor: pointer;
             background: var(--pearl-bg);
             width: 100%; 
             text-align: center;
         }
-        
-        .site-brand-header img {
-            height: clamp(50px, 10vw, 65px);
-            width: auto;
-            margin-bottom: 12px;
-            object-fit: contain;
-            display: block;
-        }
 
         .site-brand-header span {
             font-family: 'Cinzel', serif;
-            font-size: clamp(1.4rem, 5vw, 2.2rem); 
-            letter-spacing: 5px;
-            margin-right: -5px; 
+            font-size: clamp(1.5rem, 5.5vw, 2.4rem); 
+            letter-spacing: 6px;
+            margin-right: -6px; 
             text-transform: uppercase;
             color: var(--brand-blue);
             font-weight: 700;
             display: inline-block;
             width: 100%;
+            transition: color 0.3s ease;
         }
+
+        .site-brand-header:hover span { color: #f5841a; }
 
         .nav-bar { 
             position: sticky; 
@@ -208,8 +203,9 @@
         .card.visible { opacity: 1; transform: translateY(0); }
         .card:hover { border-color: #f5841a; transform: scale(1.02); }
         
+        /* Contenedor de imagen limpio con fondo corporativo */
         .img-container { width: 100%; height: 280px; position: relative; background: var(--brand-blue); overflow: hidden; }
-        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card img { width: 100%; height: 100%; object-fit: cover; display: block; position: relative; z-index: 1; }
 
         .card-info { padding: 20px; }
         .card-title { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--brand-blue); font-weight: 600; }
@@ -220,7 +216,7 @@
         .modal-content { background: var(--white); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; border-radius: 12px; position: relative; }
         .modal-close { position: absolute; top: 15px; right: 20px; font-size: 2.2rem; color: var(--brand-blue); cursor: pointer; z-index: 10; }
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
-        .modal-gallery { background: var(--brand-blue); min-height: 350px; }
+        .modal-gallery { background: var(--brand-blue); min-height: 350px; overflow: hidden; }
         .modal-details { padding: 40px; color: #333; }
         .modal-title { font-family: 'Cinzel', serif; font-size: 2.2rem; color: var(--brand-blue); font-weight: 700; }
         .btn-wa { display: block; text-align: center; background: var(--gradient); color: var(--white); text-decoration: none; padding: 18px; font-weight: 700; text-transform: uppercase; margin-top: 30px; border-radius: 6px; }
@@ -228,7 +224,7 @@
         #lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; cursor: zoom-out; }
         #lightbox-overlay img { max-width: 95%; max-height: 95vh; object-fit: contain; }
         
-        @media (max-width: 800px) { .modal-grid { grid-template-columns: 1fr; } .modal-details { padding: 30px; } }
+        @media (max-width: 800px) { .modal-grid { grid-template-columns: 1fr; } .modal-details { padding: 30px; } .img-container { height: 240px; } }
     </style>
 </head>
 <body>
@@ -248,7 +244,6 @@
     <div id="main-site-wrapper">
         
         <div class="site-brand-header" onclick="backToWelcome()">
-            <img src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="HRR Logo">
             <span>Amazing Colors</span>
         </div>
 
@@ -427,12 +422,10 @@
                 let imgUrl = getImgUrlByCodigo(codigo);
                 let pies = getCleanValue(item, ['Pies', 'PIES']);
                 let precio = getCleanValue(item, ['Precio', 'PRECIO']) || 'Experiencias';
+                
+                // Tarjetas simplificadas sin logos ni iconos parásitos de reserva/escudos
                 card.innerHTML = `
                     <div class="img-container">
-                        <div class="fallback-luxury-box">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f5841a" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <span>${codigo || 'Premium'}</span>
-                        </div>
                         ${imgUrl ? `<img src="${imgUrl}" onerror="this.style.opacity='0';">` : ''}
                     </div>
                     <div class="card-info">
@@ -453,9 +446,11 @@
             let desc = getCleanValue(item, ['Descriptivo', 'Detalles']) || 'Ficha técnica premium disponible.';
             let codigo = getCleanValue(item, ['Codigo', 'Código', 'CDG']);
             let imgUrl = getImgUrlByCodigo(codigo);
+            
+            // Modal de visualización limpio de elementos invasivos
             body.innerHTML = `
                 <div class="modal-gallery">
-                    ${imgUrl ? `<img src="${imgUrl}" onclick="openLightbox('${imgUrl}')" style="width:100%; height:100%; object-fit:cover;">` : ''}
+                    ${imgUrl ? `<img src="${imgUrl}" onclick="openLightbox('${imgUrl}')" style="width:100%; height:100%; object-fit:cover; display:block;">` : ''}
                 </div>
                 <div class="modal-details">
                     <h1 class="modal-title">${nombre}</h1>
