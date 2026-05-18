@@ -390,7 +390,7 @@
         }
         animateSmoke();
 
-        /* PARSEO DE DATOS */
+        /* PARSEO DE DATOS INTELIGENTE */
         function getCleanValue(item, possibleHeaders) {
             if (!item) return '';
             for (let originalKey in item) {
@@ -400,6 +400,11 @@
                     if (normalizedKey === normalizedHeader) {
                         let val = item[originalKey]?.trim();
                         if (!val || val.toLowerCase() === 'undefined' || val.toLowerCase() === 'null') return '';
+                        
+                        // Filtro de limpieza para el VALOR de la celda
+                        if (val.startsWith('::')) val = val.substring(2).trim();
+                        else if (val.startsWith(':')) val = val.substring(1).trim();
+                        
                         return val;
                     }
                 }
@@ -430,7 +435,6 @@
         }
 
         function filter(category) {
-            // AJUSTE: El validador ahora mapea de manera correcta contra 'momentos' o 'flota'
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.innerText.toLowerCase().includes(category === 'tour' ? 'momen' : 'flota')));
             const grid = document.getElementById('catalog-grid'); grid.innerHTML = '';
             
@@ -444,7 +448,6 @@
                 let codigo = getCleanValue(item, ['Codigo', 'Código', 'CDG']);
                 let imgUrl = getImgUrlByCodigo(codigo);
                 
-                // AJUSTE PREMIER: "Consultar" o vacío se transforman en la etiqueta elegante solicitada
                 let precio = getCleanValue(item, ['Precio', 'PRECIO']);
                 if (precio === '' || precio.toLowerCase() === 'consultar') {
                     precio = 'Momentos inolvidables';
@@ -455,12 +458,18 @@
                 
                 for (let originalKey in item) {
                     let keyNormalized = originalKey.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-                    let val = item[originalKey]?.trim();
+                    let val = getCleanValue(item, [originalKey]); 
                     
-                    if (val && val !== '' && val.toLowerCase() !== 'undefined' && val.toLowerCase() !== 'null' && !excludedHeaders.includes(keyNormalized)) {
+                    if (val && val !== '' && !excludedHeaders.includes(keyNormalized)) {
+                        // CORRECCIÓN PREMIER: Limpia los dos puntos ":" al final de la ETIQUETA (Header de columna de Google Sheet)
+                        let cleanLabel = originalKey.trim();
+                        if (cleanLabel.endsWith(':')) {
+                            cleanLabel = cleanLabel.slice(0, -1).trim();
+                        }
+
                         extraSpecsHtml += `
                             <div class="spec-row">
-                                <span class="spec-label">${originalKey}:</span>
+                                <span class="spec-label">${cleanLabel}:</span>
                                 <span class="spec-value">${val}</span>
                             </div>
                         `;
@@ -498,9 +507,15 @@
             let fullSpecsModal = '';
             for (let originalKey in item) {
                 let keyNorm = originalKey.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-                let val = item[originalKey]?.trim();
+                let val = getCleanValue(item, [originalKey]); 
                 if (val && val !== '' && !['nombre', 'codigo', 'codigo', 'tipo', 'precio', 'descriptivo', 'detalles'].includes(keyNorm)) {
-                    fullSpecsModal += `<p style="font-size:0.85rem; color:#556b79; margin-top:5px;"><strong>${originalKey}:</strong> ${val}</p>`;
+                    // CORRECCIÓN MÓDULO MODAL: Limpia los dos puntos ":" también aquí
+                    let cleanLabelModal = originalKey.trim();
+                    if (cleanLabelModal.endsWith(':')) {
+                        cleanLabelModal = cleanLabelModal.slice(0, -1).trim();
+                    }
+
+                    fullSpecsModal += `<p style="font-size:0.85rem; color:#556b79; margin-top:5px;"><strong>${cleanLabelModal}:</strong> ${val}</p>`;
                 }
             }
             
