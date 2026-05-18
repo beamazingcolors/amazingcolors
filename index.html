@@ -7,10 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-dark: #010409; 
+            --primary-dark: #02050d; 
             --brand-blue: #04263a; 
-            --accent: #f5841a;  
-            --light: #0cb5d6;   
+            --accent: #bd5307;  /* Naranja Quemado del Botón */
+            --light: #0cb5d6;   /* Neón Cian */
             --white: #ffffff;
             --pearl-bg: #f7f5f0;   
             --gradient: linear-gradient(135deg, #f5841a 0%, #ffb347 100%);
@@ -19,12 +19,12 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary-dark); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        /* 1. PANTALLA DE INICIO CINEMATOGRÁFICA */
+        /* 1. PANTALLA DE INICIO CINEMATOGRÁFICA (WELCOME SPLASH) */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
-            background-color: #010409;
+            background-color: #000000;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -41,56 +41,41 @@
             pointer-events: none;
         }
 
+        /* EFECTO DE HUMO ORGÁNICO AVANZADO */
         .smoke-container {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #01050e;
+            background: #000000;
             z-index: 1;
+            overflow: hidden;
         }
 
-        .smoke-layer {
+        /* Capas de colores fluidos inspirados fielmente en la imagen */
+        .smoke-fluid-art {
             position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
+            top: -10%; left: -10%; width: 120%; height: 120%;
             background: 
-                radial-gradient(circle at 20% 35%, rgba(12, 181, 214, 0.22), transparent 35%),
-                radial-gradient(circle at 75% 25%, rgba(245, 132, 26, 0.22), transparent 40%),
-                radial-gradient(circle at 35% 75%, rgba(4, 38, 58, 0.6), transparent 45%),
-                radial-gradient(circle at 65% 65%, rgba(214, 12, 147, 0.12), transparent 35%),
-                radial-gradient(circle at 50% 45%, rgba(12, 181, 214, 0.15), transparent 30%);
-            filter: blur(70px);
-            opacity: 0.9;
-            animation: smokeEvolution 22s infinite alternate ease-in-out;
+                radial-gradient(circle at 15% 30%, rgba(12, 181, 214, 0.28), transparent 45%),
+                radial-gradient(circle at 10% 70%, rgba(245, 132, 26, 0.25), transparent 45%),
+                radial-gradient(circle at 85% 25%, rgba(214, 12, 147, 0.25), transparent 45%),
+                radial-gradient(circle at 90% 75%, rgba(12, 181, 214, 0.25), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(4, 38, 58, 0.4), transparent 60%);
+            /* Uso de filtro fractal SVG para crear las estelas de humo */
+            filter: url(#organic-smoke-filter) blur(4px);
+            animation: smokeDrift 30s infinite alternate linear;
             transform-origin: center center;
+            opacity: 0.9;
         }
 
-        .smoke-layer-secondary {
-            position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
-            background: 
-                radial-gradient(circle at 80% 70%, rgba(12, 181, 214, 0.15), transparent 40%),
-                radial-gradient(circle at 25% 60%, rgba(245, 132, 26, 0.2), transparent 35%),
-                radial-gradient(circle at 50% 20%, rgba(4, 38, 58, 0.5), transparent 45%);
-            filter: blur(90px);
-            opacity: 0.8;
-            animation: smokeEvolutionSecondary 28s infinite alternate ease-in-out;
-        }
-
-        @keyframes smokeEvolution {
-            0% { transform: rotate(0deg) scale(1) translate(0px, 0px); }
-            50% { transform: rotate(90deg) scale(1.15) translate(40px, -60px); }
-            100% { transform: rotate(180deg) scale(1) translate(-30px, 30px); }
-        }
-
-        @keyframes smokeEvolutionSecondary {
-            0% { transform: rotate(180deg) scale(1.1) translate(20px, 40px); }
-            50% { transform: rotate(270deg) scale(0.95) translate(-40px, -20px); }
-            100% { transform: rotate(360deg) scale(1.1) translate(10px, -40px); }
+        @keyframes smokeDrift {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1.1) rotate(5deg); }
         }
 
         .smoke-vignette {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 10%, rgba(1, 4, 9, 0.6) 50%, #010409 95%);
+            background: radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.5) 60%, #000000 95%);
             z-index: 2;
             pointer-events: none;
         }
@@ -98,7 +83,7 @@
         .welcome-content {
             position: relative;
             z-index: 5;
-            max-width: 900px;
+            max-width: 950px;
             padding: 0 30px;
             display: flex;
             flex-direction: column;
@@ -106,64 +91,56 @@
         }
 
         .welcome-content img {
-            width: 320px;
-            max-width: 80vw;
-            filter: invert(1) brightness(2); 
-            margin-bottom: 30px;
-        }
-
-        .text-logo-fallback {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            letter-spacing: 6px;
-            color: var(--white);
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            display: none;
+            width: 260px;
+            max-width: 75vw;
+            margin-bottom: 35px;
+            /* Se eliminó la inversión de color para lucir el logo original idéntico al mockup */
+            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
         }
 
         .welcome-content h1 {
             font-family: 'Cinzel', serif;
-            font-size: clamp(2.4rem, 7.5vw, 4.2rem);
+            font-size: clamp(2.4rem, 6.5vw, 4rem);
             font-weight: 700;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            color: #e2ebf3;
+            color: #ffffff;
             line-height: 1.2;
             margin-bottom: 15px;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
         }
 
         .welcome-subtitle {
-            font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+            font-size: clamp(0.9rem, 2.2vw, 1.1rem);
             font-weight: 400;
-            color: #a4b3c1;
-            letter-spacing: 2px;
+            color: #b3bdc7;
+            letter-spacing: 1px;
             margin-bottom: 50px;
-            max-width: 650px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            max-width: 700px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
 
+        /* BOTÓN IDÉNTICO A LA REFERENCIA CON AURA RESPLANDECIENTE */
         .welcome-btn {
-            background: linear-gradient(135deg, #964300 0%, #cc6202 100%);
+            background-color: var(--accent);
             color: var(--white);
-            border: 2px solid #ff9d42;
-            padding: 18px 50px;
+            border: 1px solid #ff9132;
+            padding: 16px 50px;
             font-size: 0.95rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
             border-radius: 50px;
             cursor: pointer;
             position: relative;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: 0 0 35px rgba(12, 181, 214, 0.8), inset 0 0 10px rgba(255,255,255,0.15);
             font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 0 25px rgba(12, 181, 214, 0.85), inset 0 0 10px rgba(255,255,255,0.1);
         }
 
         .welcome-btn:hover {
             transform: scale(1.04);
-            box-shadow: 0 0 50px rgba(12, 181, 214, 1), 0 0 25px rgba(245, 132, 26, 0.5);
+            box-shadow: 0 0 40px rgba(12, 181, 214, 1), 0 0 20px rgba(245, 132, 26, 0.4);
             filter: brightness(1.1);
         }
 
@@ -209,7 +186,7 @@
         }
 
         .site-brand-header:hover img { transform: scale(1.05) translateY(-2px); }
-        .site-brand-header:hover span { color: var(--accent); }
+        .site-brand-header:hover span { color: #f5841a; }
 
         .nav-bar { 
             position: sticky; 
@@ -241,8 +218,8 @@
         
         .nav-btn.active { 
             opacity: 1; 
-            color: var(--accent); 
-            border-bottom: 2px solid var(--accent); 
+            color: #f5841a; 
+            border-bottom: 2px solid #f5841a; 
         }
 
         #catalog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; padding: 50px 8%; max-width: 1600px; margin: 0 auto; }
@@ -260,7 +237,7 @@
         }
         
         .card.visible { opacity: 1; transform: translateY(0); }
-        .card:hover { border-color: var(--accent); transform: scale(1.02); box-shadow: 0 15px 35px rgba(4, 38, 58, 0.08); }
+        .card:hover { border-color: #f5841a; transform: scale(1.02); box-shadow: 0 15px 35px rgba(4, 38, 58, 0.08); }
         
         .img-container {
             width: 100%;
@@ -294,7 +271,7 @@
 
         .fallback-luxury-box span {
             font-family: 'Cinzel', serif;
-            color: var(--accent);
+            color: #f5841a;
             font-size: 0.85rem;
             letter-spacing: 2px;
             margin-top: 10px;
@@ -303,9 +280,9 @@
 
         .card-info { padding: 25px; }
         .card-title { font-family: 'Cinzel', serif; font-size: 1.6rem; margin: 5px 0; letter-spacing: 2px; color: var(--brand-blue); font-weight: 600; }
-        .card-price { color: var(--accent); font-weight: 600; font-size: 1.1rem; letter-spacing: 1px; }
+        .card-price { color: #f5841a; font-weight: 600; font-size: 1.1rem; letter-spacing: 1px; }
 
-        /* MODAL DE DETALLES EDITORIAL CLARO */
+        /* MODAL DE DETALLES */
         #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 38, 58, 0.4); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
         .modal-content { background: var(--white); border: 1px solid rgba(4, 38, 58, 0.1); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; border-radius: 8px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; color: var(--brand-blue); cursor: pointer; z-index: 10; }
@@ -316,7 +293,7 @@
 
         .modal-details { padding: 50px; color: #333; }
         .modal-title { font-family: 'Cinzel', serif; font-size: 2.6rem; color: var(--brand-blue); margin-bottom: 20px; letter-spacing: 2px; font-weight: 700; }
-        .modal-label { color: var(--accent); text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; margin-top: 25px; display: block; }
+        .modal-label { color: #f5841a; text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; margin-top: 25px; display: block; }
         .btn-wa { display: block; text-align: center; background: var(--gradient); color: var(--white); text-decoration: none; padding: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; border-radius: 4px; font-family: 'Montserrat', sans-serif; }
 
         /* Lightbox Fullscreen */
@@ -328,15 +305,20 @@
 </head>
 <body>
 
+    <svg style="position:fixed; top:0; left:0; width:0; height:0; pointer-events:none;">
+        <filter id="organic-smoke-filter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="4" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="110" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </svg>
+
     <div id="welcome-screen">
         <div class="smoke-container">
-            <div class="smoke-layer"></div>
-            <div class="smoke-layer-secondary"></div>
+            <div class="smoke-fluid-art"></div>
             <div class="smoke-vignette"></div>
         </div>
         <div class="welcome-content">
-            <div id="text-logo" class="text-logo-fallback">Amazing Colors</div>
-            <img id="main-brand-logo" src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="Amazing Colors Logo" onerror="this.style.display='none'; document.getElementById('text-logo').style.display='block';">
+            <img id="main-brand-logo" src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="Amazing Colors Logo">
             <h1>Bienvenido a<br>Amazing Colors</h1>
             <p class="welcome-subtitle">Explora nuestras experiencias exclusivas y comienza tu viaje inolvidable.</p>
             <button class="welcome-btn" onclick="startExperience()">Comencemos la experiencia</button>
@@ -346,8 +328,7 @@
     <div id="main-site-wrapper">
         
         <div class="site-brand-header" onclick="backToWelcome()" title="Volver al Inicio">
-            <div id="text-logo-nav" class="text-logo-fallback" style="color:var(--brand-blue); display:none; margin:0;">Amazing Colors</div>
-            <img src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="HRR Logo" onerror="this.style.display='none'; document.getElementById('text-logo-nav').style.display='block';">
+            <img src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="HRR Logo">
             <span>Amazing Colors</span>
         </div>
 
@@ -403,12 +384,9 @@
             return '';
         }
 
-        // NUEVA LÓGICA: Sincroniza de forma limpia el nombre exacto de la columna con extensión JPG pura
         function getImgUrlByCodigo(codigoValue) {
             if (!codigoValue || codigoValue === '') return '';
             let fileName = codigoValue.trim();
-            
-            // Si la celda no tiene extensión declarada, le adjunta .jpg al final directamente
             if (!fileName.toLowerCase().endsWith('.jpg') && !fileName.toLowerCase().endsWith('.jpeg') && !fileName.toLowerCase().endsWith('.png')) {
                 fileName += '.jpg';
             }
