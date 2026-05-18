@@ -7,10 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-dark: #02050d; 
+            --primary-dark: #000000; /* Negro Absoluto para contraste */
             --brand-blue: #04263a; 
-            --accent: #bd5307;  /* Naranja Quemado del Botón */
-            --light: #0cb5d6;   /* Neón Cian */
+            --accent: #bd5307;     /* Naranja Quemado del Botón */
+            --light: #0cb5d6;      /* Neón Cian */
             --white: #ffffff;
             --pearl-bg: #f7f5f0;   
             --gradient: linear-gradient(135deg, #f5841a 0%, #ffb347 100%);
@@ -19,7 +19,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary-dark); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        /* 1. PANTALLA DE INICIO CINEMATOGRÁFICA (WELCOME SPLASH) */
+        /* 1. PANTALLA DE INICIO CINEMATOGRÁFICA (MOVIMIENTO GARANTIZADO) */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0;
@@ -41,8 +41,8 @@
             pointer-events: none;
         }
 
-        /* EFECTO DE HUMO ORGÁNICO AVANZADO */
-        .smoke-container {
+        /* MOTOR DE MOVIMIENTO FLUIDO (NUEVA TÉCNICA ROBUSTA) */
+        .fluid-art-container {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #000000;
@@ -50,32 +50,56 @@
             overflow: hidden;
         }
 
-        /* Capas de colores fluidos inspirados fielmente en la imagen */
-        .smoke-fluid-art {
+        /* Capas de degradados con desenfoque masivo y animaciones independientes */
+        .fluid-layer {
             position: absolute;
-            top: -10%; left: -10%; width: 120%; height: 120%;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            filter: blur(150px); /* Desenfoque extremo para suavizar los colores en humo */
+            opacity: 0.7;
+            mix-blend-mode: screen; /* Mezcla de color para brillo tipo neón */
+            animation: fluidFlow infinite linear;
+        }
+
+        /* Capa 1: Azules y Cianes (Fondo) */
+        .fluid-layer-1 {
             background: 
-                radial-gradient(circle at 15% 30%, rgba(12, 181, 214, 0.28), transparent 45%),
-                radial-gradient(circle at 10% 70%, rgba(245, 132, 26, 0.25), transparent 45%),
-                radial-gradient(circle at 85% 25%, rgba(214, 12, 147, 0.25), transparent 45%),
-                radial-gradient(circle at 90% 75%, rgba(12, 181, 214, 0.25), transparent 45%),
-                radial-gradient(circle at 50% 50%, rgba(4, 38, 58, 0.4), transparent 60%);
-            /* Uso de filtro fractal SVG para crear las estelas de humo */
-            filter: url(#organic-smoke-filter) blur(4px);
-            animation: smokeDrift 30s infinite alternate linear;
-            transform-origin: center center;
-            opacity: 0.9;
+                radial-gradient(circle at 20% 20%, rgba(4, 38, 58, 0.8), transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(12, 181, 214, 0.6), transparent 50%);
+            animation-duration: 25s;
         }
 
-        @keyframes smokeDrift {
-            0% { transform: scale(1) rotate(0deg); }
-            100% { transform: scale(1.1) rotate(5deg); }
+        /* Capa 2: Magentas, Rosas y Naranjas (Movimiento Medio) */
+        .fluid-layer-2 {
+            background: 
+                radial-gradient(circle at 70% 20%, rgba(189, 21, 124, 0.5), transparent 45%),
+                radial-gradient(circle at 30% 70%, rgba(245, 132, 26, 0.5), transparent 45%);
+            animation-duration: 20s;
+            animation-direction: reverse;
         }
 
-        .smoke-vignette {
+        /* Capa 3: Destellos de color (Superficie) */
+        .fluid-layer-3 {
+            background: 
+                radial-gradient(circle at 50% 10%, rgba(12, 181, 214, 0.4), transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(189, 21, 124, 0.4), transparent 40%),
+                radial-gradient(circle at 10% 50%, rgba(245, 132, 26, 0.4), transparent 40%);
+            animation-duration: 30s;
+        }
+
+        /* Animación de rotación y traslación para simular flujo de humo */
+        @keyframes fluidFlow {
+            0% { transform: rotate(0deg) translate(0, 0) scale(1); }
+            50% { transform: rotate(180deg) translate(50px, -50px) scale(1.1); }
+            100% { transform: rotate(360deg) translate(0, 0) scale(1); }
+        }
+
+        .vignette-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.5) 60%, #000000 95%);
+            background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.6) 70%, #000000 100%);
             z-index: 2;
             pointer-events: none;
         }
@@ -94,7 +118,6 @@
             width: 260px;
             max-width: 75vw;
             margin-bottom: 35px;
-            /* Se eliminó la inversión de color para lucir el logo original idéntico al mockup */
             filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
         }
 
@@ -120,7 +143,6 @@
             text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
 
-        /* BOTÓN IDÉNTICO A LA REFERENCIA CON AURA RESPLANDECIENTE */
         .welcome-btn {
             background-color: var(--accent);
             color: var(--white);
@@ -305,17 +327,12 @@
 </head>
 <body>
 
-    <svg style="position:fixed; top:0; left:0; width:0; height:0; pointer-events:none;">
-        <filter id="organic-smoke-filter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="4" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="110" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-    </svg>
-
     <div id="welcome-screen">
-        <div class="smoke-container">
-            <div class="smoke-fluid-art"></div>
-            <div class="smoke-vignette"></div>
+        <div class="fluid-art-container">
+            <div class="fluid-layer fluid-layer-1"></div>
+            <div class="fluid-layer fluid-layer-2"></div>
+            <div class="fluid-layer fluid-layer-3"></div>
+            <div class="vignette-overlay"></div>
         </div>
         <div class="welcome-content">
             <img id="main-brand-logo" src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="Amazing Colors Logo">
