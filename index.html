@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #04263a; 
+            --primary: #02060d; 
             --accent: #f5841a;  
-            --light: #0cb5d6;
+            --light: #0cb5d6;   
             --white: #ffffff;
             --gradient: linear-gradient(135deg, #f5841a 0%, #ffb347 100%);
         }
@@ -17,61 +17,222 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        header { height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(4, 38, 58, 0.85), rgba(4, 38, 58, 0.85)), url('https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/YATE-1.jpg') center/cover; padding: 20px; }
-        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: 4px; text-transform: uppercase; }
-        .header-subtitle { font-size: 1.1rem; letter-spacing: 5px; color: var(--accent); text-transform: uppercase; margin-top: 10px; font-weight: 600; }
+        /* 1. PANTALLA DE INICIO (WELCOME SPLASH) */
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 9999;
+            overflow: hidden;
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
+        }
 
-        .nav-bar { position: sticky; top: 0; z-index: 100; background: rgba(4, 38, 58, 0.98); padding: 20px 0; border-bottom: 1px solid rgba(245, 132, 26, 0.2); display: flex; justify-content: center; gap: 40px; }
+        #welcome-screen.dismissed {
+            transform: translateY(-100vh);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .smoke-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 20%, #000000 90%);
+            z-index: 1;
+        }
+
+        .smoke-layer {
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(12, 181, 214, 0.18), transparent 40%),
+                radial-gradient(circle at 70% 30%, rgba(245, 132, 26, 0.18), transparent 45%),
+                radial-gradient(circle at 40% 70%, rgba(74, 21, 75, 0.25), transparent 50%),
+                radial-gradient(circle at 60% 60%, rgba(214, 12, 147, 0.15), transparent 40%);
+            filter: blur(80px);
+            opacity: 0.85;
+            animation: smokeFluid 25s infinite alternate ease-in-out;
+        }
+
+        @keyframes smokeFluid {
+            0% { transform: rotate(0deg) scale(1) translate(0px, 0px); }
+            50% { transform: rotate(180deg) scale(1.2) translate(50px, -30px); }
+            100% { transform: rotate(360deg) scale(1) translate(-20px, 40px); }
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 5;
+            max-width: 900px;
+            padding: 0 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .welcome-content img {
+            width: 280px;
+            max-width: 75vw;
+            filter: invert(1) brightness(2); 
+            margin-bottom: 25px;
+        }
+
+        .welcome-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 7vw, 4rem);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #b5c7d3;
+            line-height: 1.1;
+            margin-bottom: 15px;
+        }
+
+        .welcome-subtitle {
+            font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+            font-weight: 400;
+            color: #a0aab5;
+            letter-spacing: 1px;
+            margin-bottom: 45px;
+            max-width: 650px;
+        }
+
+        .welcome-btn {
+            background: linear-gradient(135deg, #a84b00 0%, #d46500 100%);
+            color: var(--white);
+            border: 2px solid #ff9d42;
+            padding: 18px 45px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 0 35px rgba(12, 181, 214, 0.75), inset 0 0 10px rgba(255,255,255,0.2);
+        }
+
+        .welcome-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(12, 181, 214, 1), 0 0 20px rgba(245, 132, 26, 0.4);
+            filter: brightness(1.1);
+        }
+
+        /* 2. INTERFAZ PRINCIPAL DEL SITIO DEL CATÁLOGO */
+        #main-site-wrapper {
+            opacity: 0;
+            transition: opacity 1s ease 0.5s;
+        }
+        #main-site-wrapper.visible {
+            opacity: 1;
+        }
+
+        /* CABECERA BOTÓN EN LA SEGUNDA HOJA */
+        .site-brand-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 15px 20px;
+            cursor: pointer;
+            background: rgba(2, 6, 13, 0.98);
+            transition: all 0.3s ease;
+        }
+        
+        .site-brand-header img {
+            height: 55px;
+            margin-bottom: 12px;
+            object-fit: contain;
+            filter: invert(1) brightness(2); /* Filtro para adaptar trazos oscuros del PNG */
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .site-brand-header span {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--white);
+            transition: color 0.3s ease;
+        }
+
+        /* Animaciones Luxury al pasar el cursor sobre la marca de retorno */
+        .site-brand-header:hover img {
+            transform: scale(1.06) translateY(-2px);
+        }
+        
+        .site-brand-header:hover span {
+            color: var(--accent);
+        }
+
+        /* Barra de Navegación */
+        .nav-bar { position: sticky; top: 0; z-index: 100; background: rgba(2, 6, 13, 0.98); padding: 20px 0; border-bottom: 1px solid rgba(245, 132, 26, 0.2); display: flex; justify-content: center; gap: 40px; }
         .nav-btn { background: none; border: none; color: var(--white); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; opacity: 0.6; transition: 0.4s; padding: 10px 0; }
         .nav-btn.active { opacity: 1; color: var(--accent); border-bottom: 2px solid var(--accent); }
 
         #catalog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; padding: 50px 8%; max-width: 1600px; margin: 0 auto; }
-        .card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; transition: 0.4s; opacity: 0; transform: translateY(20px); cursor: pointer; }
+        .card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 4px; overflow: hidden; transition: 0.4s; opacity: 0; transform: translateY(20px); cursor: pointer; }
         .card.visible { opacity: 1; transform: translateY(0); }
-        .card:hover { border-color: var(--accent); transform: scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .card:hover { border-color: var(--accent); transform: scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.6); }
         
         .card img { width: 100%; height: 300px; object-fit: cover; background: #001524; display: block; }
-
         .card-info { padding: 25px; }
         .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 5px 0; letter-spacing: 1px; }
         .card-price { color: var(--accent); font-weight: 600; font-size: 1.1rem; }
 
-        /* MODAL / Vista Detallada */
-        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 38, 58, 0.98); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        /* Modal Detalle */
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 13, 0.98); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
         .modal-content { background: var(--primary); border: 1px solid var(--accent); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; border-radius: 4px; position: relative; }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; color: #fff; cursor: pointer; z-index: 10; }
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
-        
         .modal-gallery { display: flex; flex-direction: column; background: #000; justify-content: center; }
-        .modal-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; transition: transform 0.3s; }
-        .modal-gallery img:hover { transform: scale(1.01); }
-        
+        .modal-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
         .modal-details { padding: 50px; }
         .modal-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--white); margin-bottom: 20px; }
         .modal-label { color: var(--accent); text-transform: uppercase; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; margin-top: 25px; display: block; }
         .btn-wa { display: block; text-align: center; background: var(--gradient); color: var(--primary); text-decoration: none; padding: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; }
 
-        /* INTERFAZ LIGHTBOX FULLSCREEN */
-        #lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; cursor: zoom-out; animation: fadeIn 0.2s ease-out; }
-        #lightbox-overlay img { max-width: 95%; max-height: 95vh; object-fit: contain; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.9); }
+        /* Lightbox */
+        #lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; cursor: zoom-out; }
+        #lightbox-overlay img { max-width: 95%; max-height: 95vh; object-fit: contain; }
         
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @media (max-width: 850px) { .modal-grid { grid-template-columns: 1fr; } .card img { height: 250px; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>AMAZING COLORS</h1>
-        <p class="header-subtitle">Elite Ocean Journeys</p>
-    </header>
+    <div id="welcome-screen">
+        <div class="smoke-container">
+            <div class="smoke-layer"></div>
+        </div>
+        <div class="welcome-content">
+            <img src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/Png_Logo%20Horizontal%20Texto%20Negro.png" alt="Amazing Colors Logo">
+            <h1>Bienvenido a<br>Amazing Colors</h1>
+            <p class="welcome-subtitle">Explora nuestras experiencias exclusivas y comienza tu viaje inolvidable.</p>
+            <button class="welcome-btn" onclick="startExperience()">Comencemos la experiencia</button>
+        </div>
+    </div>
 
-    <nav class="nav-bar">
-        <button id="btnTour" class="nav-btn active" onclick="filter('tour')">Experiencias</button>
-        <button id="btnYate" class="nav-btn" onclick="filter('yate')">Nuestra Flota</button>
-    </nav>
+    <div id="main-site-wrapper">
+        
+        <div class="site-brand-header" onclick="backToWelcome()" title="Volver al Inicio">
+            <img src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="HRR Logo">
+            <span>Amazing Colors</span>
+        </div>
 
-    <main id="catalog-grid"></main>
+        <nav class="nav-bar">
+            <button id="btnTour" class="nav-btn active" onclick="filter('tour')">Experiencias</button>
+            <button id="btnYate" class="nav-btn" onclick="filter('yate')">Nuestra Flota</button>
+        </nav>
+
+        <main id="catalog-grid"></main>
+    </div>
 
     <div id="modal-overlay" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
@@ -89,6 +250,19 @@
         const GITHUB_RAW = 'https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/';
 
         let fullData = [];
+
+        // Transición de apertura cinematográfica
+        function startExperience() {
+            document.getElementById('welcome-screen').classList.add('dismissed');
+            document.getElementById('main-site-wrapper').classList.add('visible');
+        }
+
+        // Transición inversa para volver al humo inicial
+        function backToWelcome() {
+            document.getElementById('welcome-screen').classList.remove('dismissed');
+            document.getElementById('main-site-wrapper').classList.remove('visible');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         function getImgUrlByCodigo(codigoValue) {
             if (!codigoValue || codigoValue === 'Experiencias' || codigoValue.trim() === '') return '';
@@ -161,7 +335,6 @@
             const codigoCelda = item['Codigo'] || item['Código'] || item['codigo'] || '';
             const img = getImgUrlByCodigo(codigoCelda);
 
-            // Se integra la acción 'openLightbox' al hacer click sobre la imagen expuesta
             body.innerHTML = `
                 <div class="modal-gallery">
                     <img src="${img}" onclick="openLightbox('${img}')" title="Click para expandir" onerror="this.style.display='none';">
@@ -193,7 +366,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        /* Lógica del Lightbox */
         function openLightbox(src) {
             const overlay = document.getElementById('lightbox-overlay');
             const img = document.getElementById('lightbox-img');
