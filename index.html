@@ -119,7 +119,7 @@
             color: var(--white);
             margin-bottom: 30px;
             text-transform: uppercase;
-            display: none; /* Solo se activa si el PNG falla */
+            display: none;
         }
 
         .welcome-content h1 {
@@ -262,7 +262,6 @@
         .card.visible { opacity: 1; transform: translateY(0); }
         .card:hover { border-color: var(--accent); transform: scale(1.02); box-shadow: 0 15px 35px rgba(4, 38, 58, 0.08); }
         
-        /* Contenedor de Imagen con Soporte Estético de Error */
         .img-container {
             width: 100%;
             height: 300px;
@@ -280,7 +279,6 @@
             z-index: 2;
         }
 
-        /* Bloque interno elegante que aparece si la foto falta en GitHub */
         .fallback-luxury-box {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -389,7 +387,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Lector universal e insensible a mayúsculas o acentos para las celdas del Excel
         function getCleanValue(item, possibleHeaders) {
             if (!item) return '';
             for (let originalKey in item) {
@@ -406,11 +403,13 @@
             return '';
         }
 
+        // NUEVA LÓGICA: Sincroniza de forma limpia el nombre exacto de la columna con extensión JPG pura
         function getImgUrlByCodigo(codigoValue) {
             if (!codigoValue || codigoValue === '') return '';
             let fileName = codigoValue.trim();
+            
+            // Si la celda no tiene extensión declarada, le adjunta .jpg al final directamente
             if (!fileName.toLowerCase().endsWith('.jpg') && !fileName.toLowerCase().endsWith('.jpeg') && !fileName.toLowerCase().endsWith('.png')) {
-                if (!fileName.includes('-1')) { fileName = `${fileName}-1`; }
                 fileName += '.jpg';
             }
             return GITHUB_RAW + encodeURIComponent(fileName);
@@ -457,7 +456,6 @@
                 let precio = getCleanValue(item, ['Precio', 'PRECIO']);
                 if (precio === '') precio = 'Experiencias';
 
-                // Si la imagen falla en GitHub, el 'onerror' la oculta y expone la caja de respaldo elegante
                 card.innerHTML = `
                     <div class="img-container">
                         <div class="fallback-luxury-box">
