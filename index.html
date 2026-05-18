@@ -19,7 +19,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary-dark); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        /* 1. PANTALLA DE INICIO CON LIENZO DE HUMO REAL */
+        /* 1. PANTALLA DE INICIO CON LIENZO DE HUMO ACELERADO */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0;
@@ -41,7 +41,6 @@
             pointer-events: none;
         }
 
-        /* El lienzo ocupa todo el fondo de la entrada */
         #smokeCanvas {
             position: absolute;
             top: 0; left: 0;
@@ -336,7 +335,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* SIMULADOR DE HUMO FLUIDO POR CANVAS (ALTA COMPATIBILIDAD) */
+        /* SIMULADOR DE HUMO ACELERADO */
         const canvas = document.getElementById('smokeCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -351,35 +350,36 @@
         class SmokeParticle {
             constructor() {
                 this.reset();
-                this.y = Math.random() * canvas.height; // Distribución inicial uniforme
+                this.y = Math.random() * canvas.height; 
             }
             reset() {
                 this.x = Math.random() * canvas.width;
-                this.y = canvas.height + Math.random() * 100;
-                this.size = Math.random() * 180 + 100;
-                this.speedY = -(Math.random() * 0.7 + 0.4);
-                this.speedX = Math.sin(Math.random() * 2) * 0.5;
+                this.y = canvas.height + Math.random() * 80;
+                this.size = Math.random() * 160 + 90;
+                // PARÁMETROS ACELERADOS: Velocidad vertical sustancialmente mayor
+                this.speedY = -(Math.random() * 2.8 + 1.8);
+                // Oscilación lateral ampliada y veloz
+                this.speedX = Math.sin(Math.random() * 2) * 1.6;
                 this.alpha = 0;
-                this.maxAlpha = Math.random() * 0.12 + 0.04;
+                this.maxAlpha = Math.random() * 0.14 + 0.05;
                 
-                // Paleta exacta de colores de la marca
                 const colors = [
-                    '4, 38, 58',    /* Azul Marino */
-                    '12, 181, 214',  /* Neón Cian */
-                    '245, 132, 26',  /* Naranja Luxury */
-                    '189, 21, 124'   /* Rosado/Magenta */
+                    '4, 38, 58',    
+                    '12, 181, 214',  
+                    '245, 132, 26',  
+                    '189, 21, 124'   
                 ];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
             }
             update() {
                 this.y += this.speedY;
-                this.x += this.speedX + Math.sin(this.y / 40) * 0.3; // Ondulación orgánica
+                this.x += this.speedX + Math.sin(this.y / 25) * 0.8; 
 
-                // Ciclo de desvanecimiento (Fade in / Fade out)
-                if (this.y < canvas.height * 0.8) {
-                    this.alpha -= 0.001;
+                // Transición alfa veloz para acompañar la rapidez del flujo
+                if (this.y < canvas.height * 0.4) {
+                    this.alpha -= 0.006;
                 } else if (this.alpha < this.maxAlpha) {
-                    this.alpha += 0.002;
+                    this.alpha += 0.009;
                 }
 
                 if (this.y + this.size < 0 || this.alpha <= 0) {
@@ -388,10 +388,10 @@
             }
             draw() {
                 ctx.save();
-                ctx.globalCompositeOperation = 'screen'; /* Mezcla luminosa premium */
-                const gradient = ctx.createRadialGradient(this.x, this.y, 10, this.x, this.y, this.size);
+                ctx.globalCompositeOperation = 'screen'; 
+                const gradient = ctx.createRadialGradient(this.x, this.y, 5, this.x, this.y, this.size);
                 gradient.addColorStop(0, `rgba(${this.color}, ${this.alpha})`);
-                gradient.addColorStop(0.5, `rgba(${this.color}, ${this.alpha * 0.4})`);
+                gradient.addColorStop(0.4, `rgba(${this.color}, ${this.alpha * 0.5})`);
                 gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
                 
                 ctx.fillStyle = gradient;
@@ -402,8 +402,7 @@
             }
         }
 
-        // Crear banco de partículas fluidas
-        for (let i = 0; i < 45; i++) {
+        for (let i = 0; i < 50; i++) {
             particles.push(new SmokeParticle());
         }
 
@@ -419,7 +418,7 @@
         }
         animateSmoke();
 
-        /* LÓGICA DE DATOS Y FILTRADO DEL SITIO */
+        /* MANEJO DE TSV Y CATÁLOGO */
         function getCleanValue(item, possibleHeaders) {
             if (!item) return '';
             for (let originalKey in item) {
