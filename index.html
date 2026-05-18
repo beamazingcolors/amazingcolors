@@ -19,13 +19,13 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary-dark); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        /* LIENZO DE HUMO GLOBAL (Fijo por encima de todo el sitio, transparente e interactivo) */
+        /* LIENZO DE HUMO GLOBAL */
         #smokeCanvas {
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
             z-index: 99999;
-            pointer-events: none; /* Permite hacer click a través del humo sin bloquear botones */
+            pointer-events: none; 
         }
 
         /* 1. PANTALLA DE INICIO CINEMATOGRÁFICA */
@@ -42,6 +42,7 @@
             z-index: 9998;
             overflow: hidden;
             transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
+            touch-action: none; 
         }
 
         #welcome-screen.dismissed {
@@ -109,7 +110,7 @@
             border-radius: 50px;
             cursor: pointer;
             position: relative;
-            z-index: 100000; /* Asegura interacción por encima del canvas */
+            z-index: 100000; 
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             font-family: 'Montserrat', sans-serif;
             box-shadow: 0 0 25px rgba(12, 181, 214, 0.85), inset 0 0 10px rgba(255,255,255,0.1);
@@ -134,32 +135,42 @@
             opacity: 1;
         }
 
+        /* CORRECCIÓN: Cabecera con alineación forzada y simétrica */
         .site-brand-header {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
             padding: 45px 20px 20px 20px;
             cursor: pointer;
             background: var(--pearl-bg);
             transition: all 0.3s ease;
+            width: 100%;
         }
         
         .site-brand-header img {
             height: 60px;
+            width: auto;
             margin-bottom: 12px;
             object-fit: contain;
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
+        /* CORRECCIÓN: Tipografía responsiva con compensación óptica de espaciado */
         .site-brand-header span {
             font-family: 'Cinzel', serif;
-            font-size: 2rem;
+            font-size: clamp(1.4rem, 5vw, 2rem); /* Escala perfectamente según el ancho de pantalla */
             letter-spacing: 5px;
+            margin-right: -5px; /* Neutraliza el espacio extra del último carácter para centrado perfecto */
+            text-align: center; /* Centra las líneas de texto si llega a romper en móvil */
             text-transform: uppercase;
             color: var(--brand-blue);
             transition: color 0.3s ease;
             font-weight: 600;
+            display: inline-block;
+            width: 100%;
+            max-width: 90vw;
         }
 
         .site-brand-header:hover img { transform: scale(1.05) translateY(-2px); }
@@ -358,7 +369,6 @@
             constructor(isFromMouse = false, mouseX = 0, mouseY = 0) {
                 this.isMouse = isFromMouse;
                 if (this.isMouse) {
-                    // CONFIGURACIÓN LUXURY: Estela del cursor de amplio espectro, fina y duradera
                     this.x = mouseX + (Math.random() - 0.5) * 15;
                     this.y = mouseY + (Math.random() - 0.5) * 10;
                     this.size = Math.random() * 20 + 10;
@@ -410,8 +420,6 @@
             draw() {
                 if (this.alpha <= 0) return;
                 ctx.save();
-                
-                // Renders con mezcla nativa limpia para verse nítido tanto en fondo oscuro como perlado claro
                 ctx.globalCompositeOperation = 'source-over'; 
                 
                 const gradient = ctx.createRadialGradient(this.x, this.y, 2, this.x, this.y, this.size);
@@ -429,28 +437,25 @@
             }
         }
 
-        // Población inicial de ambiente
         for (let i = 0; i < 40; i++) { particles.push(new SmokeParticle(false)); }
 
-        // CAPTURA INTERACTIVA GLOBAL (Sigue el cursor en todas las páginas)
         window.addEventListener('mousemove', (e) => {
-            particles.push(new SmokeParticle(true, e.clientX, e.clientY));
+            for (let i = 0; i < 2; i++) { particles.push(new SmokeParticle(true, e.clientX, e.clientY)); }
         });
 
-        // Evento táctil global optimizado para no romper el scroll del catálogo
         window.addEventListener('touchmove', (e) => {
             const touch = e.touches[0];
-            particles.push(new SmokeParticle(true, touch.clientX, touch.clientY));
+            for (let i = 0; i < 2; i++) {
+                particles.push(new SmokeParticle(true, touch.clientX, touch.clientY));
+            }
         }, { passive: true });
 
         function animateSmoke() {
-            // El lienzo interactivo superior se limpia por completo en cada cuadro para no manchar el fondo
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update();
                 
-                // Si el sitio principal está activo, no renderizamos el humo ambiental para dejar impecable el fondo perlado
                 if (!particles[i].isMouse && isMainSiteActive) {
                     particles[i].alpha = 0;
                 }
