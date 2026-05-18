@@ -168,7 +168,7 @@
             border-bottom: 1px solid rgba(4, 38, 58, 0.08); 
             display: flex; 
             justify-content: center; 
-            gap: 30px; Sundy
+            gap: 30px; 
         }
         
         .nav-btn { 
@@ -211,7 +211,6 @@
         .card-title { font-family: 'Cinzel', serif; font-size: 1.35rem; color: var(--brand-blue); font-weight: 700; line-height: 1.3; }
         .card-price { color: #f5841a; font-weight: 600; font-size: 1.1rem; margin-bottom: 5px; }
 
-        /* CONTENEDOR DINÁMICO PARA TODA LA INFORMACIÓN EXTRA DE LAS COLUMNAS */
         .card-extra-specs {
             margin-top: auto;
             padding-top: 15px;
@@ -267,7 +266,7 @@
         </div>
 
         <nav class="nav-bar">
-            <button id="btnTour" class="nav-btn active" onclick="filter('tour')">Experiencias</button>
+            <button id="btnTour" class="nav-btn active" onclick="filter('tour')">Momentos inolvidables</button>
             <button id="btnYate" class="nav-btn" onclick="filter('yate')">Nuestra Flota</button>
         </nav>
 
@@ -305,7 +304,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* EFECTO DE ORBES FINOS EVAPORÁNDOSE */
+        /* EFECTO DE ORBES FINOS */
         const canvas = document.getElementById('smokeCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -343,12 +342,10 @@
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + Math.random() * 80;
                 this.size = Math.random() * 160 + 90;
-                this.growth = 0;
                 this.speedY = -(Math.random() * 2.8 + 1.8);
                 this.speedX = Math.sin(Math.random() * 2) * 1.6;
                 this.alpha = 0;
                 this.maxAlpha = Math.random() * 0.14 + 0.05;
-                this.decay = 0;
                 this.colorFormat = 'rgb';
                 this.color = BRAND_COLORS[Math.floor(Math.random() * BRAND_COLORS.length)];
             }
@@ -393,7 +390,7 @@
         }
         animateSmoke();
 
-        /* PARSEO DINÁMICO DE TODA LA INFORMACIÓN EXTRA DE GOOGLE SHEETS */
+        /* PARSEO DE DATOS */
         function getCleanValue(item, possibleHeaders) {
             if (!item) return '';
             for (let originalKey in item) {
@@ -433,7 +430,8 @@
         }
 
         function filter(category) {
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.innerText.toLowerCase().includes(category === 'tour' ? 'exp' : 'flota')));
+            // AJUSTE: El validador ahora mapea de manera correcta contra 'momentos' o 'flota'
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.innerText.toLowerCase().includes(category === 'tour' ? 'momen' : 'flota')));
             const grid = document.getElementById('catalog-grid'); grid.innerHTML = '';
             
             const filtered = fullData.filter(item => getCleanValue(item, ['TIPO', 'Tipo']).toLowerCase().includes(category.toLowerCase()));
@@ -445,17 +443,20 @@
                 
                 let codigo = getCleanValue(item, ['Codigo', 'Código', 'CDG']);
                 let imgUrl = getImgUrlByCodigo(codigo);
-                let precio = getCleanValue(item, ['Precio', 'PRECIO']) || 'Consultar';
+                
+                // AJUSTE PREMIER: "Consultar" o vacío se transforman en la etiqueta elegante solicitada
+                let precio = getCleanValue(item, ['Precio', 'PRECIO']);
+                if (precio === '' || precio.toLowerCase() === 'consultar') {
+                    precio = 'Momentos inolvidables';
+                }
 
-                // MOTOR AUTOMÁTICO DE DATOS: Lee todas las columnas existentes del renglón excepto las estructurales principales
                 let extraSpecsHtml = '';
-                const excludedHeaders = ['nombre', 'codigo', 'codigo', 'tipo', 'precio', 'descriptivo', 'detalles'];
+                const excludedHeaders = ['nombre', 'codigo', 'codigo', 'tipo', 'precio', 'descriptivo', 'detalles', 'incluye:'];
                 
                 for (let originalKey in item) {
                     let keyNormalized = originalKey.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
                     let val = item[originalKey]?.trim();
                     
-                    // Si la columna tiene información útil y no es de control interno, la agregamos al cuadro
                     if (val && val !== '' && val.toLowerCase() !== 'undefined' && val.toLowerCase() !== 'null' && !excludedHeaders.includes(keyNormalized)) {
                         extraSpecsHtml += `
                             <div class="spec-row">
@@ -484,12 +485,16 @@
             const item = fullData.find(i => getCleanValue(i, ['Nombre', 'NOMBRE']) === nombreBusqueda);
             const body = document.getElementById('modal-body');
             let nombre = getCleanValue(item, ['Nombre', 'NOMBRE']);
-            let precio = getCleanValue(item, ['Precio', 'PRECIO']) || 'Consultar';
+            
+            let precio = getCleanValue(item, ['Precio', 'PRECIO']);
+            if (precio === '' || precio.toLowerCase() === 'consultar') {
+                precio = 'Momentos inolvidables';
+            }
+            
             let desc = getCleanValue(item, ['Descriptivo', 'Detalles']) || 'Ficha técnica premium disponible.';
             let codigo = getCleanValue(item, ['Codigo', 'Código', 'CDG']);
             let imgUrl = getImgUrlByCodigo(codigo);
             
-            // Render completo en la vista detallada
             let fullSpecsModal = '';
             for (let originalKey in item) {
                 let keyNorm = originalKey.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
