@@ -112,6 +112,16 @@
             margin-bottom: 30px;
         }
 
+        .text-logo-fallback {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            letter-spacing: 6px;
+            color: var(--white);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            display: none; /* Solo se activa si el PNG falla */
+        }
+
         .welcome-content h1 {
             font-family: 'Cinzel', serif;
             font-size: clamp(2.4rem, 7.5vw, 4.2rem);
@@ -250,67 +260,72 @@
         }
         
         .card.visible { opacity: 1; transform: translateY(0); }
+        .card:hover { border-color: var(--accent); transform: scale(1.02); box-shadow: 0 15px 35px rgba(4, 38, 58, 0.08); }
         
-        .card:hover { 
-            border-color: var(--accent); 
-            transform: scale(1.02); 
-            box-shadow: 0 15px 35px rgba(4, 38, 58, 0.08); 
+        /* Contenedor de Imagen con Soporte Estético de Error */
+        .img-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            background: var(--brand-blue);
+            overflow: hidden;
         }
-        
-        .card img { width: 100%; height: 300px; object-fit: cover; background: #eaeaea; display: block; }
+
+        .card img, .modal-gallery img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: block; 
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Bloque interno elegante que aparece si la foto falta en GitHub */
+        .fallback-luxury-box {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--brand-blue);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .fallback-luxury-box span {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
         .card-info { padding: 25px; }
-        
-        .card-title { 
-            font-family: 'Cinzel', serif; 
-            font-size: 1.6rem; 
-            margin: 5px 0; 
-            letter-spacing: 2px; 
-            color: var(--brand-blue); 
-            font-weight: 600;
-        }
-        
+        .card-title { font-family: 'Cinzel', serif; font-size: 1.6rem; margin: 5px 0; letter-spacing: 2px; color: var(--brand-blue); font-weight: 600; }
         .card-price { color: var(--accent); font-weight: 600; font-size: 1.1rem; letter-spacing: 1px; }
 
-        /* MODAL DE DETALLES */
+        /* MODAL DE DETALLES EDITORIAL CLARO */
         #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 38, 58, 0.4); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        
-        .modal-content { 
-            background: var(--white); 
-            border: 1px solid rgba(4, 38, 58, 0.1); 
-            width: 100%; 
-            max-width: 1000px; 
-            max-height: 90vh; 
-            overflow-y: auto; 
-            border-radius: 8px; 
-            position: relative; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-        }
-        
+        .modal-content { background: var(--white); border: 1px solid rgba(4, 38, 58, 0.1); width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; border-radius: 8px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; color: var(--brand-blue); cursor: pointer; z-index: 10; }
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
-        .modal-gallery { display: flex; flex-direction: column; background: #f0f0f0; justify-content: center; }
-        .modal-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
         
+        .modal-gallery { position: relative; background: var(--brand-blue); min-height: 400px; }
+        .modal-gallery img { cursor: zoom-in; }
+
         .modal-details { padding: 50px; color: #333; }
-        
-        .modal-title { 
-            font-family: 'Cinzel', serif; 
-            font-size: 2.6rem; 
-            color: var(--brand-blue); 
-            margin-bottom: 20px; 
-            letter-spacing: 2px;
-            font-weight: 700;
-        }
-        
+        .modal-title { font-family: 'Cinzel', serif; font-size: 2.6rem; color: var(--brand-blue); margin-bottom: 20px; letter-spacing: 2px; font-weight: 700; }
         .modal-label { color: var(--accent); text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; margin-top: 25px; display: block; }
-        
         .btn-wa { display: block; text-align: center; background: var(--gradient); color: var(--white); text-decoration: none; padding: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; border-radius: 4px; font-family: 'Montserrat', sans-serif; }
 
         /* Lightbox Fullscreen */
         #lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; cursor: zoom-out; }
         #lightbox-overlay img { max-width: 95%; max-height: 95vh; object-fit: contain; }
         
-        @media (max-width: 850px) { .modal-grid { grid-template-columns: 1fr; } .card img { height: 250px; } }
+        @media (max-width: 850px) { .modal-grid { grid-template-columns: 1fr; } .img-container { height: 250px; } .modal-gallery { min-height: 250px; } }
     </style>
 </head>
 <body>
@@ -322,7 +337,8 @@
             <div class="smoke-vignette"></div>
         </div>
         <div class="welcome-content">
-            <img src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="Amazing Colors Logo">
+            <div id="text-logo" class="text-logo-fallback">Amazing Colors</div>
+            <img id="main-brand-logo" src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="Amazing Colors Logo" onerror="this.style.display='none'; document.getElementById('text-logo').style.display='block';">
             <h1>Bienvenido a<br>Amazing Colors</h1>
             <p class="welcome-subtitle">Explora nuestras experiencias exclusivas y comienza tu viaje inolvidable.</p>
             <button class="welcome-btn" onclick="startExperience()">Comencemos la experiencia</button>
@@ -332,7 +348,8 @@
     <div id="main-site-wrapper">
         
         <div class="site-brand-header" onclick="backToWelcome()" title="Volver al Inicio">
-            <img src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="HRR Logo">
+            <div id="text-logo-nav" class="text-logo-fallback" style="color:var(--brand-blue); display:none; margin:0;">Amazing Colors</div>
+            <img src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="HRR Logo" onerror="this.style.display='none'; document.getElementById('text-logo-nav').style.display='block';">
             <span>Amazing Colors</span>
         </div>
 
@@ -372,11 +389,28 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Lector universal e insensible a mayúsculas o acentos para las celdas del Excel
+        function getCleanValue(item, possibleHeaders) {
+            if (!item) return '';
+            for (let originalKey in item) {
+                let normalizedKey = originalKey.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                for (let header of possibleHeaders) {
+                    let normalizedHeader = header.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                    if (normalizedKey === normalizedHeader) {
+                        let val = item[originalKey]?.trim();
+                        if (!val || val.toLowerCase() === 'undefined' || val.toLowerCase() === 'null') return '';
+                        return val;
+                    }
+                }
+            }
+            return '';
+        }
+
         function getImgUrlByCodigo(codigoValue) {
-            if (!codigoValue || codigoValue === 'Experiencias' || codigoValue.trim() === '') return '';
+            if (!codigoValue || codigoValue === '') return '';
             let fileName = codigoValue.trim();
-            if (!fileName.includes('-1')) { fileName = `${fileName}-1`; }
             if (!fileName.toLowerCase().endsWith('.jpg') && !fileName.toLowerCase().endsWith('.jpeg') && !fileName.toLowerCase().endsWith('.png')) {
+                if (!fileName.includes('-1')) { fileName = `${fileName}-1`; }
                 fileName += '.jpg';
             }
             return GITHUB_RAW + encodeURIComponent(fileName);
@@ -391,10 +425,7 @@
                 
                 fullData = rows.slice(1).map(row => {
                     let item = {};
-                    headers.forEach((h, i) => {
-                        let val = row[i]?.trim();
-                        item[h] = (!val || val.toLowerCase() === 'undefined' || val.toLowerCase() === 'null') ? 'Experiencias' : val;
-                    });
+                    headers.forEach((h, i) => { item[h] = row[i]?.trim(); });
                     return item;
                 });
                 filter('tour');
@@ -406,24 +437,38 @@
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = '';
             
-            const filtered = fullData.filter(i => (i['TIPO'] || '').toLowerCase().includes(category));
+            const filtered = fullData.filter(item => {
+                let tipo = getCleanValue(item, ['TIPO', 'Tipo']).toLowerCase();
+                return tipo.includes(category.toLowerCase());
+            });
 
             filtered.forEach((item, idx) => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = () => openModal(item.Nombre);
                 
-                const codigoCelda = item['Codigo'] || item['Código'] || item['codigo'] || '';
-                const img = getImgUrlByCodigo(codigoCelda);
-                const tag = item['Pies'] !== 'Experiencias' ? item['Pies'] + ' Pies' : 'Selección Premium';
-                let precio = item['Precio'] || 'Experiencias';
-                if (precio.toLowerCase() === 'undefined' || precio.trim() === '') precio = 'Experiencias';
+                let nombre = getCleanValue(item, ['Nombre', 'NOMBRE']);
+                card.onclick = () => openModal(nombre);
+                
+                let codigo = getCleanValue(item, ['Codigo', 'Código', 'CDG']);
+                let imgUrl = getImgUrlByCodigo(codigo);
+                let pies = getCleanValue(item, ['Pies', 'PIES']);
+                const tag = pies !== '' ? `${pies} Pies` : 'Selección Premium';
+                
+                let precio = getCleanValue(item, ['Precio', 'PRECIO']);
+                if (precio === '') precio = 'Experiencias';
 
+                // Si la imagen falla en GitHub, el 'onerror' la oculta y expone la caja de respaldo elegante
                 card.innerHTML = `
-                    <img src="${img}" onerror="this.style.display='none';">
+                    <div class="img-container">
+                        <div class="fallback-luxury-box">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f5841a" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <span>${codigo || 'Premium'}</span>
+                        </div>
+                        ${imgUrl ? `<img src="${imgUrl}" onerror="this.style.opacity='0';">` : ''}
+                    </div>
                     <div class="card-info">
                         <span style="color:var(--light); font-size:0.75rem; font-weight:600; letter-spacing:2px; text-transform:uppercase;">${tag}</span>
-                        <h2 class="card-title">${item.Nombre}</h2>
+                        <h2 class="card-title">${nombre}</h2>
                         <p class="card-price">${precio}</p>
                     </div>
                 `;
@@ -432,34 +477,39 @@
             });
         }
 
-        function openModal(nombre) {
-            const item = fullData.find(i => i.Nombre === nombre);
+        function openModal(nombreBusqueda) {
+            const item = fullData.find(i => getCleanValue(i, ['Nombre', 'NOMBRE']) === nombreBusqueda);
             const body = document.getElementById('modal-body');
             
-            let precio = item.Precio;
-            if (!precio || precio.toLowerCase() === 'undefined' || precio.trim() === '') precio = 'Experiencias';
-            let desc = item['Descriptivo'] !== 'Experiencias' ? item['Descriptivo'] : (item['Detalles'] !== 'Experiencias' ? item['Detalles'] : 'Experiencias');
-            
-            const codigoCelda = item['Codigo'] || item['Código'] || item['codigo'] || '';
-            const img = getImgUrlByCodigo(codigoCelda);
+            let nombre = getCleanValue(item, ['Nombre', 'NOMBRE']);
+            let precio = getCleanValue(item, ['Precio', 'PRECIO']) || 'Experiencias';
+            let desc = getCleanValue(item, ['Descriptivo', 'Detalles']) || 'Ficha técnica premium disponible bajo solicitud.';
+            let capacidad = getCleanValue(item, ['Capacidad de personas', 'Capacidad', 'CAPACIDAD']);
+            let incluye = getCleanValue(item, ['Incluye:', 'INCLUYE', 'incluye']) || 'Servicio Premium de Concierge incluido.';
+            let codigo = getCleanValue(item, ['Codigo', 'Código', 'CDG']);
+            let imgUrl = getImgUrlByCodigo(codigo);
 
             body.innerHTML = `
                 <div class="modal-gallery">
-                    <img src="${img}" onclick="openLightbox('${img}')" title="Click para expandir" onerror="this.style.display='none';">
+                    <div class="fallback-luxury-box">
+                        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#f5841a" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>${codigo || 'Premium'}</span>
+                    </div>
+                    ${imgUrl ? `<img src="${imgUrl}" onclick="openLightbox('${imgUrl}')" title="Click para expandir" onerror="this.style.opacity='0';">` : ''}
                 </div>
                 <div class="modal-details">
                     <span class="modal-label">Propuesta Exclusiva</span>
-                    <h1 class="modal-title">${item.Nombre}</h1>
+                    <h1 class="modal-title">${nombre}</h1>
                     <p class="card-price" style="font-size:1.6rem;">${precio}</p>
                     
                     <span class="modal-label">Sobre la Experiencia</span>
-                    <p style="font-size:0.9rem; color:#444;">${desc}</p>
+                    <p style="font-size:0.9rem; color:#444; margin-top:5px;">${desc}</p>
                     
-                    ${item['Capacidad de personas'] !== 'Experiencias' ? `<span class="modal-label">Capacidad</span><p style="color:#444;">${item['Capacidad de personas']}</p>` : ''}
+                    ${capacidad !== '' ? `<span class="modal-label">Capacidad</span><p style="color:#444; margin-top:5px;">${capacidad}</p>` : ''}
                     
                     <span class="modal-label">Incluye</span>
                     <div style="background:rgba(12,181,214,0.06); border-left:3px solid var(--light); padding:20px; font-size:0.85rem; margin-top:10px; color:#444;">
-                        ${item['Incluye:'] !== 'Experiencias' ? item['Incluye:'] : 'Servicio Premium de Concierge incluido.'}
+                        ${incluye}
                     </div>
                     
                     <a href="https://wa.me/message/XIVP7QDJ5QKIP1" target="_blank" class="btn-wa">Reservar ahora</a>
