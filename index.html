@@ -31,12 +31,13 @@
             pointer-events: none; 
         }
 
-        /* 1. PANTALLA DE INICIO */
+        /* 1. PANTALLA DE INICIO CON AZUL OCÉANO VIVO */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
-            background-color: #000000;
+            /* CORRECCIÓN: Iluminación zafiro central más vibrante y visible */
+            background: radial-gradient(circle at 50% 45%, #0c4d75 0%, #052c47 55%, #021726 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -54,10 +55,41 @@
             pointer-events: none;
         }
 
+        /* CAPA DE OLAS FLUIDAS */
+        .ocean-waves {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%;
+            height: 42vh; 
+            min-height: 220px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .waves-svg {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        .parallax > use {
+            animation: move-forever 22s cubic-bezier(.55,.5,.45,.5) infinite;
+        }
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 9s; }
+        .parallax > use:nth-child(2) { animation-delay: -4s; animation-duration: 13s; }
+        .parallax > use:nth-child(3) { animation-delay: -5s; animation-duration: 17s; }
+        .parallax > use:nth-child(4) { animation-delay: -7s; animation-duration: 25s; }
+
+        @keyframes move-forever {
+            0% { transform: translate3d(-90px, 0, 0); }
+            100% { transform: translate3d(85px, 0, 0); }
+        }
+
+        /* CORRECCIÓN: Suavizado del viñeteado para no opacar el azul central */
         .vignette-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.4) 60%, #000000 95%);
+            background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.1) 65%, rgba(0, 0, 0, 0.5) 100%);
             z-index: 2;
             pointer-events: none;
         }
@@ -76,7 +108,7 @@
             width: 260px;
             max-width: 75vw;
             margin-bottom: 35px;
-            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.6));
+            filter: drop-shadow(0 4px 20px rgba(0,0,0,0.5));
         }
 
         .welcome-content h1 {
@@ -88,16 +120,17 @@
             color: #ffffff;
             line-height: 1.2;
             margin-bottom: 15px;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            text-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
         .welcome-subtitle {
             font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             font-weight: 400;
-            color: #b3bdc7;
+            color: #c4d1db;
             letter-spacing: 1px;
             margin-bottom: 50px;
             max-width: 700px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
 
         .welcome-btn {
@@ -254,6 +287,19 @@
     <canvas id="smokeCanvas"></canvas>
 
     <div id="welcome-screen">
+        <div class="ocean-waves">
+            <svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                <defs>
+                    <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18v44h-352z" />
+                </defs>
+                <g class="parallax">
+                    <use href="#gentle-wave" x="48" y="0" fill="rgba(12, 181, 214, 0.18)" />
+                    <use href="#gentle-wave" x="48" y="3" fill="rgba(247, 245, 240, 0.08)" />
+                    <use href="#gentle-wave" x="48" y="5" fill="rgba(245, 132, 26, 0.06)" />
+                    <use href="#gentle-wave" x="48" y="7" fill="rgba(4, 38, 58, 0.35)" />
+                </g>
+            </svg>
+        </div>
         <div class="vignette-overlay"></div>
         <div class="welcome-content">
             <img id="main-brand-logo" src="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png" alt="Amazing Colors Logo">
@@ -394,7 +440,7 @@
         }
         animateSmoke();
 
-        /* PARSEO DE DATOS INTELIGENTE CON SANITIZACIÓN DE ACENTOS */
+        /* PARSEO DE DATOS INTELIGENTE CON SANITIZACIÓN */
         function getCleanValue(item, possibleHeaders) {
             if (!item) return '';
             for (let originalKey in item) {
@@ -438,7 +484,6 @@
         }
 
         function filter(category) {
-            // Normalización para activar las pestañas correctamente eliminando acentos en la validación
             document.querySelectorAll('.nav-bar .nav-btn').forEach(btn => {
                 let textNorm = btn.innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 if (category === 'tour') btn.classList.toggle('active', textNorm.includes('momen'));
@@ -448,7 +493,6 @@
 
             const grid = document.getElementById('catalog-grid'); grid.innerHTML = '';
             
-            // Filtrado seguro: se remueven tildes estructurales para emparejar perfectamente la fila del Sheet
             const filtered = fullData.filter(item => {
                 let tipoSheet = getCleanValue(item, ['TIPO', 'Tipo']).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 let catTarget = category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
