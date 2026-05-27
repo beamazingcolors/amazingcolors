@@ -168,7 +168,8 @@
             border-bottom: 1px solid rgba(4, 38, 58, 0.08); 
             display: flex; 
             justify-content: center; 
-            gap: 30px; 
+            gap: 25px; 
+            flex-wrap: wrap; /* Permite una correcta adaptación si la pantalla móvil es muy angosta */
         }
         
         .nav-btn { 
@@ -181,6 +182,8 @@
             cursor: pointer; 
             opacity: 0.6; 
             font-weight: 600;
+            padding: 5px 2px;
+            transition: all 0.3s ease;
         }
         
         .nav-btn.active { opacity: 1; color: #f5841a; border-bottom: 2px solid #f5841a; }
@@ -243,7 +246,7 @@
         #lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; cursor: zoom-out; }
         #lightbox-overlay img { max-width: 95%; max-height: 95vh; object-fit: contain; }
         
-        @media (max-width: 800px) { .modal-grid { grid-template-columns: 1fr; } .modal-details { padding: 30px; } .img-container { height: 240px; } }
+        @media (max-width: 800px) { .modal-grid { grid-template-columns: 1fr; } .modal-details { padding: 30px; } .img-container { height: 240px; } .nav-bar { gap: 15px; padding: 15px 10px; } .nav-btn { font-size: 0.78rem; } }
     </style>
 </head>
 <body>
@@ -268,6 +271,7 @@
         <nav class="nav-bar">
             <button id="btnTour" class="nav-btn active" onclick="filter('tour')">Momentos inolvidables</button>
             <button id="btnYate" class="nav-btn" onclick="filter('yate')">Nuestra Flota</button>
+            <button id="btnTransportacion" class="nav-btn" onclick="filter('transportacion')">Transportación</button>
         </nav>
 
         <main id="catalog-grid"></main>
@@ -304,7 +308,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* EFECTO DE ORBES FINOS */
+        /* MOTOR DE ORBES EVAPORÁNDOSE */
         const canvas = document.getElementById('smokeCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -401,7 +405,6 @@
                         let val = item[originalKey]?.trim();
                         if (!val || val.toLowerCase() === 'undefined' || val.toLowerCase() === 'null') return '';
                         
-                        // Filtro de limpieza para el VALOR de la celda
                         if (val.startsWith('::')) val = val.substring(2).trim();
                         else if (val.startsWith(':')) val = val.substring(1).trim();
                         
@@ -435,9 +438,15 @@
         }
 
         function filter(category) {
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.innerText.toLowerCase().includes(category === 'tour' ? 'momen' : 'flota')));
+            // AJUSTE: Actualización del validador de clases activas para soportar las tres secciones
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                let text = btn.innerText.toLowerCase();
+                if (category === 'tour') btn.classList.toggle('active', text.includes('momen'));
+                else if (category === 'yate') btn.classList.toggle('active', text.includes('flota'));
+                else if (category === 'transportacion') btn.classList.toggle('active', text.includes('trans'));
+            });
+
             const grid = document.getElementById('catalog-grid'); grid.innerHTML = '';
-            
             const filtered = fullData.filter(item => getCleanValue(item, ['TIPO', 'Tipo']).toLowerCase().includes(category.toLowerCase()));
             
             filtered.forEach((item, idx) => {
@@ -461,7 +470,6 @@
                     let val = getCleanValue(item, [originalKey]); 
                     
                     if (val && val !== '' && !excludedHeaders.includes(keyNormalized)) {
-                        // CORRECCIÓN PREMIER: Limpia los dos puntos ":" al final de la ETIQUETA (Header de columna de Google Sheet)
                         let cleanLabel = originalKey.trim();
                         if (cleanLabel.endsWith(':')) {
                             cleanLabel = cleanLabel.slice(0, -1).trim();
@@ -509,7 +517,6 @@
                 let keyNorm = originalKey.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
                 let val = getCleanValue(item, [originalKey]); 
                 if (val && val !== '' && !['nombre', 'codigo', 'codigo', 'tipo', 'precio', 'descriptivo', 'detalles'].includes(keyNorm)) {
-                    // CORRECCIÓN MÓDULO MODAL: Limpia los dos puntos ":" también aquí
                     let cleanLabelModal = originalKey.trim();
                     if (cleanLabelModal.endsWith(':')) {
                         cleanLabelModal = cleanLabelModal.slice(0, -1).trim();
