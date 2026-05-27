@@ -168,8 +168,8 @@
             border-bottom: 1px solid rgba(4, 38, 58, 0.08); 
             display: flex; 
             justify-content: center; 
-            gap: 25px; 
-            flex-wrap: wrap; /* Permite una correcta adaptación si la pantalla móvil es muy angosta */
+            gap: 30px; 
+            flex-wrap: wrap;
         }
         
         .nav-btn { 
@@ -394,7 +394,7 @@
         }
         animateSmoke();
 
-        /* PARSEO DE DATOS INTELIGENTE */
+        /* PARSEO DE DATOS INTELIGENTE CON SANITIZACIÓN DE ACENTOS */
         function getCleanValue(item, possibleHeaders) {
             if (!item) return '';
             for (let originalKey in item) {
@@ -438,16 +438,22 @@
         }
 
         function filter(category) {
-            // AJUSTE: Actualización del validador de clases activas para soportar las tres secciones
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                let text = btn.innerText.toLowerCase();
-                if (category === 'tour') btn.classList.toggle('active', text.includes('momen'));
-                else if (category === 'yate') btn.classList.toggle('active', text.includes('flota'));
-                else if (category === 'transportacion') btn.classList.toggle('active', text.includes('trans'));
+            // Normalización para activar las pestañas correctamente eliminando acentos en la validación
+            document.querySelectorAll('.nav-bar .nav-btn').forEach(btn => {
+                let textNorm = btn.innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (category === 'tour') btn.classList.toggle('active', textNorm.includes('momen'));
+                else if (category === 'yate') btn.classList.toggle('active', textNorm.includes('flota'));
+                else if (category === 'transportacion') btn.classList.toggle('active', textNorm.includes('trans'));
             });
 
             const grid = document.getElementById('catalog-grid'); grid.innerHTML = '';
-            const filtered = fullData.filter(item => getCleanValue(item, ['TIPO', 'Tipo']).toLowerCase().includes(category.toLowerCase()));
+            
+            // Filtrado seguro: se remueven tildes estructurales para emparejar perfectamente la fila del Sheet
+            const filtered = fullData.filter(item => {
+                let tipoSheet = getCleanValue(item, ['TIPO', 'Tipo']).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                let catTarget = category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                return tipoSheet.includes(catTarget);
+            });
             
             filtered.forEach((item, idx) => {
                 const card = document.createElement('div'); card.className = 'card';
