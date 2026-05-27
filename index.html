@@ -31,12 +31,11 @@
             pointer-events: none; 
         }
 
-        /* 1. PANTALLA DE INICIO CON AZUL OCÉANO VIVO */
+        /* 1. PANTALLA DE INICIO */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
-            /* CORRECCIÓN: Iluminación zafiro central más vibrante y visible */
             background: radial-gradient(circle at 50% 45%, #0c4d75 0%, #052c47 55%, #021726 100%);
             display: flex;
             flex-direction: column;
@@ -55,7 +54,6 @@
             pointer-events: none;
         }
 
-        /* CAPA DE OLAS FLUIDAS */
         .ocean-waves {
             position: absolute;
             bottom: 0; left: 0;
@@ -85,7 +83,6 @@
             100% { transform: translate3d(85px, 0, 0); }
         }
 
-        /* CORRECCIÓN: Suavizado del viñeteado para no opacar el azul central */
         .vignette-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -461,11 +458,19 @@
             return '';
         }
 
+        /* CORRECCIÓN DE PARSEO: Ahora detecta códigos de transporte de forma inteligente si no traen extensión explícita */
         function getImgUrlByCodigo(codigoValue) {
             if (!codigoValue || codigoValue === '') return '';
             let fileName = codigoValue.trim();
-            if (!fileName.toLowerCase().endsWith('.jpg') && !fileName.toLowerCase().endsWith('.jpeg') && !fileName.toLowerCase().endsWith('.png')) {
-                fileName += '.jpg';
+            let lower = fileName.toLowerCase();
+            
+            // Si el renglón no trae extensión (.png o .jpg), decidimos según el código
+            if (!lower.endsWith('.jpg') && !lower.endsWith('.jpeg') && !lower.endsWith('.png')) {
+                if (lower.startsWith('tr')) {
+                    fileName += '.png'; /* Forzamos .png para tus archivos TRRR y TRW */
+                } else {
+                    fileName += '.jpg';
+                }
             }
             return GITHUB_RAW + encodeURIComponent(fileName);
         }
@@ -534,9 +539,10 @@
                     }
                 }
 
+                /* CORRECCIÓN DE IMAGEN MÓVIL/ESCRITORIO: El onerror ahora detecta si la extensión falló y muta automáticamente entre .jpg y .png como salvavidas */
                 card.innerHTML = `
                     <div class="img-container">
-                        ${imgUrl ? `<img src="${imgUrl}" onerror="this.style.opacity='0';">` : ''}
+                        ${imgUrl ? `<img src="${imgUrl}" onerror="if(!this.dataset.retry){this.dataset.retry=true; this.src=this.src.toLowerCase().includes('.jpg')?this.src.replace(/\.jpg/i,'.png'):this.src.replace(/\.png/i,'.jpg');}else{this.style.opacity='0';}">` : ''}
                     </div>
                     <div class="card-info">
                         <h2 class="card-title">${nombre}</h2>
@@ -576,9 +582,10 @@
                 }
             }
             
+            /* SALVAVIDAS DÚPLEX TAMBIÉN EN EL MODAL DE DETALLES */
             body.innerHTML = `
                 <div class="modal-gallery">
-                    ${imgUrl ? `<img src="${imgUrl}" onclick="openLightbox('${imgUrl}')" style="width:100%; height:100%; object-fit:cover; display:block;">` : ''}
+                    ${imgUrl ? `<img src="${imgUrl}" onclick="openLightbox('${imgUrl}')" onerror="if(!this.dataset.retry){this.dataset.retry=true; this.src=this.src.toLowerCase().includes('.jpg')?this.src.replace(/\.jpg/i,'.png'):this.src.replace(/\.png/i,'.jpg');}else{this.style.opacity='0';}" style="width:100%; height:100%; object-fit:cover; display:block;">` : ''}
                 </div>
                 <div class="modal-details">
                     <h1 class="modal-title">${nombre}</h1>
