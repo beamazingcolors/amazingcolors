@@ -22,7 +22,16 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--primary-dark); color: var(--white); font-family: 'Montserrat', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-        /* 1. PANTALLA DE INICIO CON AZUL OCÉANO VIVO IMPOLUTO */
+        /* LIENZO DE PARTICULAS MAGNÉTICAS */
+        #particleCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 99999;
+            pointer-events: none; 
+        }
+
+        /* 1. PANTALLA DE INICIO */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0;
@@ -273,6 +282,8 @@
 </head>
 <body>
 
+    <canvas id="particleCanvas"></canvas>
+
     <div id="welcome-screen">
         <div class="ocean-waves">
             <svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
@@ -337,6 +348,84 @@
             document.getElementById('main-site-wrapper').classList.remove('visible');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        /* NUEVO MOTOR DE PARTÍCULAS: CHISPAS FINAS CON ACCELERACIÓN DE GRAVEDAD */
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class SparkParticle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = Math.random() * 2 + 1.2;       /* Orbes muy finos y pequeños */
+                this.vx = (Math.random() - 0.5) * 3.5;       /* Dispersión lateral leve */
+                this.vy = (Math.random() - 0.5) * 3.5 - 1.5; /* Impulso inicial hacia arriba */
+                this.gravity = 0.14;                         /* Aceleración gravitatoria continua (caída) */
+                this.hue = Math.floor(Math.random() * 360);  /* Espectro completo de colores al azar */
+                this.alpha = 1;                              /* Brillo total de inicio */
+                this.decay = Math.random() * 0.012 + 0.012;  /* Duración exacta en pantalla */
+            }
+
+            update() {
+                this.x += this.vx;
+                this.vy += this.gravity;                     /* La gravedad tira del orbe hacia abajo cada frame */
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+
+            draw() {
+                if (this.alpha <= 0) return;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                
+                // Color HSL premium de alta saturación
+                ctx.fillStyle = `hsla(${this.hue}, 95%, 60%, ${this.alpha})`;
+                
+                // Efecto halo resplandeciente para simular chispas de luz
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = `hsl(${this.hue}, 95%, 60%)`;
+                
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Emisión sutil al mover el cursor
+        window.addEventListener('mousemove', (e) => {
+            for (let i = 0; i < 2; i++) {
+                particles.push(new SparkParticle(e.clientX, e.clientY));
+            }
+        });
+
+        // Emisión en dispositivos móviles sin bloquear el scroll del catálogo
+        window.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            for (let i = 0; i < 2; i++) {
+                particles.push(new SparkParticle(touch.clientX, touch.clientY));
+            }
+        }, { passive: true });
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
 
         /* PARSEO DE DATOS INTELIGENTE CON SANITIZACIÓN */
         function getCleanValue(item, possibleHeaders) {
