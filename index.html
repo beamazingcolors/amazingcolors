@@ -333,7 +333,8 @@
     </div>
 
     <script>
-        const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9f5_81pPWsXVaJ5uKaifOyjpmSprGKAzEkGh7qMSd5R83cV8UCJeqldoZIb5l3sN8kDEbFoC2NY0s/pub?gid=451869619&single=true&output=tsv';
+        // ACTUALIZACIÓN DE BASE DE DATOS REALIZADA DE FORMA EXITOSA
+        const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSpCWJlj6HKzh_LIA2SXADpmORKc43sw8U_Eo4pLrirJ9ZP23WwYE6BlyygN-hxqy-QAaLadVeXPkGC/pub?output=tsv';
         const GITHUB_RAW = 'https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/';
 
         let fullData = [];
@@ -349,7 +350,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* NUEVO MOTOR DE PARTÍCULAS: CHISPAS FINAS CON ACCELERACIÓN DE GRAVEDAD */
+        /* MOTOR DE PARTÍCULAS GRAVITATORIAS */
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -365,18 +366,18 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.radius = Math.random() * 2 + 1.2;       /* Orbes muy finos y pequeños */
-                this.vx = (Math.random() - 0.5) * 3.5;       /* Dispersión lateral leve */
-                this.vy = (Math.random() - 0.5) * 3.5 - 1.5; /* Impulso inicial hacia arriba */
-                this.gravity = 0.14;                         /* Aceleración gravitatoria continua (caída) */
-                this.hue = Math.floor(Math.random() * 360);  /* Espectro completo de colores al azar */
-                this.alpha = 1;                              /* Brillo total de inicio */
-                this.decay = Math.random() * 0.012 + 0.012;  /* Duración exacta en pantalla */
+                this.radius = Math.random() * 2 + 1.2;       
+                this.vx = (Math.random() - 0.5) * 3.5;       
+                this.vy = (Math.random() - 0.5) * 3.5 - 1.5; 
+                this.gravity = 0.14;                         
+                this.hue = Math.floor(Math.random() * 360);  
+                this.alpha = 1;                              
+                this.decay = Math.random() * 0.012 + 0.012;  
             }
 
             update() {
                 this.x += this.vx;
-                this.vy += this.gravity;                     /* La gravedad tira del orbe hacia abajo cada frame */
+                this.vy += this.gravity;                     
                 this.y += this.vy;
                 this.alpha -= this.decay;
             }
@@ -386,32 +387,21 @@
                 ctx.save();
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                
-                // Color HSL premium de alta saturación
                 ctx.fillStyle = `hsla(${this.hue}, 95%, 60%, ${this.alpha})`;
-                
-                // Efecto halo resplandeciente para simular chispas de luz
                 ctx.shadowBlur = 6;
                 ctx.shadowColor = `hsl(${this.hue}, 95%, 60%)`;
-                
                 ctx.fill();
                 ctx.restore();
             }
         }
 
-        // Emisión sutil al mover el cursor
         window.addEventListener('mousemove', (e) => {
-            for (let i = 0; i < 2; i++) {
-                particles.push(new SparkParticle(e.clientX, e.clientY));
-            }
+            for (let i = 0; i < 2; i++) { particles.push(new SparkParticle(e.clientX, e.clientY)); }
         });
 
-        // Emisión en dispositivos móviles sin bloquear el scroll del catálogo
         window.addEventListener('touchmove', (e) => {
             const touch = e.touches[0];
-            for (let i = 0; i < 2; i++) {
-                particles.push(new SparkParticle(touch.clientX, touch.clientY));
-            }
+            for (let i = 0; i < 2; i++) { particles.push(new SparkParticle(touch.clientX, touch.clientY)); }
         }, { passive: true });
 
         function animateParticles() {
@@ -427,7 +417,7 @@
         }
         animateParticles();
 
-        /* PARSEO DE DATOS INTELIGENTE CON SANITIZACIÓN */
+        /* PARSEO DE DATOS INTELIGENTE */
         function getCleanValue(item, possibleHeaders) {
             if (!item) return '';
             for (let originalKey in item) {
