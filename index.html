@@ -241,8 +241,10 @@
         .img-container { width: 100%; height: 260px; position: relative; background: var(--brand-blue); overflow: hidden; }
         .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+        /* CORRECCIÓN: Separación interna equilibrada para el bloque de textos */
         .card-info { padding: 30px 25px; flex-grow: 1; display: flex; flex-direction: column; }
         
+        /* Título con mejor interlineado y margen de respiro */
         .card-title { 
             font-family: 'Cinzel', serif; 
             font-size: 1.35rem; 
@@ -259,13 +261,14 @@
             margin-bottom: 20px; 
         }
 
+        /* CORRECCIÓN: El cuadro de información extra se separa limpiamente con gap y borde superior */
         .card-extra-specs {
             margin-top: auto;
             padding-top: 20px;
             border-top: 1px dashed rgba(4, 38, 58, 0.15);
             display: flex;
             flex-direction: column;
-            gap: 10px; 
+            gap: 10px; /* Evita que las líneas de texto queden pegadas entre sí */
         }
 
         .spec-row {
@@ -362,8 +365,7 @@
     </div>
 
     <script>
-        // VINCULACIÓN EXITOSA AL ENLACE SOLICITADO
-        const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9f5_81pPWsXVaJ5uKaifOyjpmSprGKAzEkGh7qMSd5R83cV8UCJeqldoZIb5l3sN8kDEbFoC2NY0s/pub?output=tsv';
+        const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSpCWJlj6HKzh_LIA2SXADpmORKc43sw8U_Eo4pLrirJ9ZP23WwYE6BlyygN-hxqy-QAaLadVeXPkGC/pub?output=tsv';
         const GITHUB_RAW = 'https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/';
 
         let fullData = [];
@@ -465,14 +467,13 @@
             return '';
         }
 
-        /* CORRECCIÓN EXCLUSIVA: Ahora mapea tanto "tr" como el nuevo prefijo "mr" directamente a formato .png */
         function getImgUrlByCodigo(codigoValue) {
             if (!codigoValue || codigoValue === '') return '';
             let fileName = codigoValue.trim();
             let lower = fileName.toLowerCase();
             
             if (!lower.endsWith('.jpg') && !lower.endsWith('.jpeg') && !lower.endsWith('.png')) {
-                if (lower.startsWith('tr') || lower.startsWith('mr')) {
+                if (lower.startsWith('tr')) {
                     fileName += '.png';
                 } else {
                     fileName += '.jpg';
