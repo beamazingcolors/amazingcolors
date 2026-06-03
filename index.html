@@ -7,7 +7,7 @@
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/HRR.png">
     
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-dark: #000000; 
@@ -241,28 +241,57 @@
         .img-container { width: 100%; height: 260px; position: relative; background: var(--brand-blue); overflow: hidden; }
         .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-        .card-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
-        .card-title { font-family: 'Cinzel', serif; font-size: 1.35rem; color: var(--brand-blue); font-weight: 700; line-height: 1.3; }
-        .card-price { color: #f5841a; font-weight: 600; font-size: 1.1rem; margin-bottom: 5px; }
+        .card-info { padding: 30px 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .card-title { 
+            font-family: 'Cinzel', serif; 
+            font-size: 1.35rem; 
+            color: var(--brand-blue); 
+            font-weight: 700; 
+            line-height: 1.4; 
+            margin-bottom: 12px; 
+        }
+        
+        .card-price { 
+            color: #f5841a; 
+            font-weight: 600; 
+            font-size: 1.1rem; 
+            margin-bottom: 20px; 
+        }
 
         .card-extra-specs {
             margin-top: auto;
-            padding-top: 15px;
-            border-top: 1px dashed rgba(4, 38, 58, 0.1);
+            padding-top: 20px;
+            border-top: 1px dashed rgba(4, 38, 58, 0.15);
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 10px; 
         }
 
         .spec-row {
-            font-size: 0.8rem;
-            color: #556b79;
+            font-size: 0.85rem;
+            color: #4a5e6a;
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
+            line-height: 1.4;
         }
 
-        .spec-label { font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--brand-blue); opacity: 0.8; }
-        .spec-value { text-align: right; font-weight: 400; }
+        .spec-label { 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px; 
+            color: var(--brand-blue); 
+            opacity: 0.9;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        
+        .spec-value { 
+            text-align: right; 
+            font-weight: 500; 
+            color: #556b79;
+        }
 
         /* MODAL */
         #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 38, 58, 0.4); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
@@ -333,8 +362,8 @@
     </div>
 
     <script>
-        // ACTUALIZACIÓN DE BASE DE DATOS REALIZADA DE FORMA EXITOSA
-        const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSpCWJlj6HKzh_LIA2SXADpmORKc43sw8U_Eo4pLrirJ9ZP23WwYE6BlyygN-hxqy-QAaLadVeXPkGC/pub?output=tsv';
+        // VINCULACIÓN EXITOSA AL ENLACE SOLICITADO
+        const TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9f5_81pPWsXVaJ5uKaifOyjpmSprGKAzEkGh7qMSd5R83cV8UCJeqldoZIb5l3sN8kDEbFoC2NY0s/pub?output=tsv';
         const GITHUB_RAW = 'https://raw.githubusercontent.com/beamazingcolors/amazingcolors/main/';
 
         let fullData = [];
@@ -350,7 +379,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* MOTOR DE PARTÍCULAS GRAVITATORIAS */
+        /* MOTOR DE PARTÍCULAS */
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -409,9 +438,7 @@
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update();
                 particles[i].draw();
-                if (particles[i].alpha <= 0) {
-                    particles.splice(i, 1);
-                }
+                if (particles[i].alpha <= 0) { particles.splice(i, 1); }
             }
             requestAnimationFrame(animateParticles);
         }
@@ -438,13 +465,14 @@
             return '';
         }
 
+        /* CORRECCIÓN EXCLUSIVA: Ahora mapea tanto "tr" como el nuevo prefijo "mr" directamente a formato .png */
         function getImgUrlByCodigo(codigoValue) {
             if (!codigoValue || codigoValue === '') return '';
             let fileName = codigoValue.trim();
             let lower = fileName.toLowerCase();
             
             if (!lower.endsWith('.jpg') && !lower.endsWith('.jpeg') && !lower.endsWith('.png')) {
-                if (lower.startsWith('tr')) {
+                if (lower.startsWith('tr') || lower.startsWith('mr')) {
                     fileName += '.png';
                 } else {
                     fileName += '.jpg';
@@ -555,7 +583,7 @@
                         cleanLabelModal = cleanLabelModal.slice(0, -1).trim();
                     }
 
-                    fullSpecsModal += `<p style="font-size:0.85rem; color:#556b79; margin-top:5px;"><strong>${cleanLabelModal}:</strong> ${val}</p>`;
+                    fullSpecsModal += `<p style="font-size:0.85rem; color:#556b79; margin-top:8px;"><strong>${cleanLabelModal}:</strong> ${val}</p>`;
                 }
             }
             
@@ -565,9 +593,9 @@
                 </div>
                 <div class="modal-details">
                     <h1 class="modal-title">${nombre}</h1>
-                    <p class="card-price" style="font-size:1.6rem;">${precio}</p>
-                    <p style="font-size:0.95rem; color:#333; margin-top:15px; font-weight:500;">${desc}</p>
-                    ${fullSpecsModal ? `<div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.08);">${fullSpecsModal}</div>` : ''}
+                    <p class="card-price" style="font-size:1.6rem; margin-bottom:15px;">${precio}</p>
+                    <p style="font-size:0.95rem; color:#333; margin-top:15px; font-weight:500; line-height:1.5;">${desc}</p>
+                    ${fullSpecsModal ? `<div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.08); display:flex; flex-direction:column; gap:6px;">${fullSpecsModal}</div>` : ''}
                     <a href="https://wa.me/message/XIVP7QDJ5QKIP1" target="_blank" class="btn-wa">Reservar ahora</a>
                 </div>
             `;
